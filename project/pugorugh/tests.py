@@ -2,9 +2,6 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
-# Create your tests here.
-
-
 
 # ----------
 # MODEL TESTS
@@ -57,3 +54,36 @@ class UserModelTestCase(TestCase):
         result = str(User.objects.get(pk=1))
 
         self.assertEqual(expected, result)
+
+
+
+# -----------
+# API TESTS
+# -----------
+
+"""
+"/api/user/preferences"
+
+GET Request
+[]: When retrieved, should return status code of 200 if authenticated
+[]: When retrieved, should return status code of 403 if not authenticated
+[]: When retrieved, should return object without user field
+[]: When retrieved the first time, it should return fields with empty values
+    i.e.
+
+        {
+            "age": "",
+            "gender": "",
+            "size": ""
+        }
+
+[]: when the following values have been added to user preferences
+    {
+        "user": [1], <-- referencing the account for testing
+        "age": "b,y",
+        "gender": "m,f",
+        "size": "s,m,l"
+    }
+
+    the same except user is returned
+"""
