@@ -12,18 +12,15 @@ class UserRegisterView(CreateAPIView):
     model = get_user_model()
     serializer_class = serializers.UserSerializer
 
-
-
 class UserPerfView(RetrieveUpdateAPIView):
     model = models.UserPerf
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.UserPerfSerializer
 
     def get_object(self):
-        return self.model.objects.get(user=self.request.user)
+        try:
+            obj = self.model.objects.get(user=self.request.user)
+        except self.model.DoesNotExist:
+            obj = self.model.objects.create(user=self.request.user)
 
-    def perform_create(self, serializer):
-        user = self.request.user
-
-        serializer.save(user=user)
-
+        return obj
