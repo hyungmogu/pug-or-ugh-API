@@ -9,8 +9,8 @@ class UserPerf(models.Model):
 
 class Dog(models.Model):
     name = models.CharField(max_length=255)
-    image_filename = models.ImageField(upload_to='dogs', null=True, blank=True)
-    breed = models.CharField(max_length=255)
+    image_filename = models.CharField(max_length=225)
+    breed = models.CharField(max_length=255, blank=True)
     age = models.IntegerField(default=0)
     gender = models.CharField(max_length=1)
     size = models.CharField(max_length=2)
