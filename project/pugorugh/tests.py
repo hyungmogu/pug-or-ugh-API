@@ -190,6 +190,44 @@ class UserPerfTestCase(TestCase):
         self.assertEqual(expected, result)
 
 
+
+"""
+Dog Model
+    given that the following dogs are added to database
+
+    {
+        "name": "Francesca",
+        "image_filename": "1.jpg",
+        "breed": "Labrador",
+        "age": 72,
+        "gender": "f",
+        "size": "l"
+    },
+    {
+        "name": "Hank",
+        "image_filename": "2.jpg",
+        "breed": "French Bulldog",
+        "age": 14,
+        "gender": "m",
+        "size": "s"
+    }
+
+    []: When all are retrieved, it should return the count of 2
+    []: if a dog with pk=1 is retrieved, it should have name of Francesca
+    []: if a dog with pk=1 is retrieved, it should have image_filename of "1.jpg"
+    []: if a dog with pk=1 is retrieved, it should have breed of Labrador
+    []: if a dog with pk=1 is retrieved it should have age of 72
+    []: if a dog with pk=1 is retrieved it should have gender of f
+    []: if a dog with pk=1 is retrieved it should have size of l
+
+    []: if a dog with pk=1 is retrieved, it should have name of Hank
+    []: if a dog with pk=1 is retrieved, it should have image_filename of "2.jpg"
+    []: if a dog with pk=1 is retrieved, it should have breed of French Bulldog
+    []: if a dog with pk=1 is retrieved it should have age of 14
+    []: if a dog with pk=1 is retrieved it should have gender of m
+    []: if a dog with pk=1 is retrieved it should have size of s
+"""
+
 # -----------
 # API TESTS
 # -----------
