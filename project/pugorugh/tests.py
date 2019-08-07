@@ -59,6 +59,136 @@ class UserModelTestCase(TestCase):
         self.assertEqual(expected, result)
 
 
+"""
+UserPerf Model
+    given that the following user perfs are added to database, one for each user
+
+    {
+        "user": USER_1 <-- has username test1,
+        "age": "b",
+        "gender": "m",
+        size: "s"
+    }
+
+        {
+        "user": USER_2 <-- has username test2,
+        "age": "a",
+        "gender": "m",
+        size: "l"
+    }
+
+    [x]: return count of 2 on user_perf models
+    [x]: if user perf of pk=1 is retrieved, it should have username of test1
+    [x]: if user perf of pk=1 is retrieved, it should have age of b
+    [x]: if user perf of pk=1 is retrieved, it should have gender of m
+    [x]: if user perf of pk=1 is retrieved it should have size of s
+
+    [x]: if user perf of pk=2 is retrieved, it should have username of test2
+    [x]: if user perf of pk=2 is retrieved, it should have age of a
+    [x]: if user perf of pk=2 is retrieved, it should have gender of m
+    [x]: if user perf of pk=2 is retrieved, it shuld have size of l
+"""
+class UserPerfTestCase(TestCase):
+    def setUp(self):
+        self.user1 = User.objects.create(
+            username="test1",
+            password="12345"
+        )
+
+        self.user2 = User.objects.create(
+            username="test2",
+            password="12345"
+        )
+
+        self.userPerf1 = models.UserPerf.objects.create(
+            user=self.user1,
+            age="b",
+            gender="m",
+            size="s"
+        )
+
+        self.userPerf2 = models.UserPerf.objects.create(
+            user=self.user2,
+            age="a",
+            gender="m",
+            size="l"
+        )
+
+    def test_return_count_of_2_when_all_retrived(self):
+        expected = 2
+
+        result = models.UserPerf.objects.all().count()
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_perf_pk_1_with_username_of_test1(self):
+        expected = 'test1'
+
+        user_perf = models.UserPerf.objects.get(pk=1)
+        result = user_perf.user.username
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_perf_pk_1_with_age_b(self):
+        expected = 'b'
+
+        user_perf = models.UserPerf.objects.get(pk=1)
+        result = user_perf.age
+
+        self.assertEqual(expected, result)
+
+
+    def test_return_user_perf_pk_1_with_gender_m(self):
+        expected = 'm'
+
+        user_perf = models.UserPerf.objects.get(pk=1)
+        result = user_perf.gender
+
+        self.assertEqual(expected, result)
+
+
+    def test_return_user_perf_pk_1_with_size_s(self):
+        expected = 's'
+
+        user_perf = models.UserPerf.objects.get(pk=1)
+        result = user_perf.size
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_perf_pk_2_with_username_of_test2(self):
+        expected = 'test2'
+
+        user_perf = models.UserPerf.objects.get(pk=2)
+        result = user_perf.user.username
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_perf_pk_2_with_age_a(self):
+        expected = 'a'
+
+        user_perf = models.UserPerf.objects.get(pk=2)
+        result = user_perf.age
+
+        self.assertEqual(expected, result)
+
+
+    def test_return_user_perf_pk_2_with_gender_m(self):
+        expected = 'm'
+
+        user_perf = models.UserPerf.objects.get(pk=2)
+        result = user_perf.gender
+
+        self.assertEqual(expected, result)
+
+
+    def test_return_user_perf_pk_2_with_size_l(self):
+        expected = 'l'
+
+        user_perf = models.UserPerf.objects.get(pk=2)
+        result = user_perf.size
+
+        self.assertEqual(expected, result)
+
 
 # -----------
 # API TESTS
