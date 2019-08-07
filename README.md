@@ -60,6 +60,10 @@ This is the eleventh project to team tree house's Python Web Tech Degree.
     - The code is clean, readable, and well organized. It complies with most common PEP 8 standards of style.
 
 
+## Steps to pre-populating data
+1. Once in `project` folder of virtual environment (`step 3` under Steps to Running/Exiting the Program), navigate to `pugorugh/script` folder
+2. Execute the pre-populating program by typing `python data_import.py`
+
 ## Steps to Running/Exiting the Program
 1. Install pipenv by typing `pip install pipenv` or `pip3 install pipenv` for python3 users
 2. In `project` folder, install dependencies by typing `pipenv install`
