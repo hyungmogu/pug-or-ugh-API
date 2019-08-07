@@ -26,3 +26,9 @@ class UserPerfSerializer(serializers.ModelSerializer):
             'age','gender','size'
         )
         model=models.UserPerf
+
+
+class DogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=models.Dog
+

@@ -9,7 +9,8 @@ import pugorugh.views as views
 
 # API endpoints
 urlpatterns = format_suffix_patterns([
-    url(r'^api/user/preferences/$', views.UserPerfView.as_view(), name='perf_user'),
+    url(r'^api/dog/(?P<pk>\d+)/$', views.RetrieveDogView.as_view(), name='dog'),
+    url(r'^api/user/preferences/$', views.UserPerfView.as_view(), name='perf-user'),
     url(r'^api/user/login/$', obtain_auth_token, name='login-user'),
     url(r'^api/user/$', views.UserRegisterView.as_view(), name='register-user'),
     url(r'^favicon\.ico$',
