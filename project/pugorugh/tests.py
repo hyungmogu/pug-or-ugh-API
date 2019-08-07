@@ -90,7 +90,7 @@ GET Request
 
     the same except user is returned
 """
-class TestPreferencesGETRequest(TestCase):
+class PreferenceTest(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.resp_register = self.client.post(
@@ -102,6 +102,7 @@ class TestPreferencesGETRequest(TestCase):
             format='json'
         )
 
+class TestPreferencesGETRequest(PreferenceTest):
     def test_return_status_code_200_if_authenticated(self):
         expected = 200
 
@@ -191,3 +192,13 @@ class TestPreferencesGETRequest(TestCase):
         self.assertEqual(expected_size, result_size)
 
 
+"""
+"/api/user/preferences"
+
+POST Request
+[]: When successful, should return the status code of 200
+[]: When accessed by non-authenticated user, should return the status code of 401
+[]: When successful, should create and store the userPerf information, if userPerf of a user didn't exist
+[]: When successful, database should contain the matching information, if userPref of a user already exists
+[]: When a field is empty, then should return status code 400
+"""
