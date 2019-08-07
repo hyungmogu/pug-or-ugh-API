@@ -196,9 +196,204 @@ class TestPreferencesGETRequest(PreferenceTest):
 "/api/user/preferences"
 
 PUT Request
-[]: When successful, should return the status code of 200
-[]: When accessed by non-authenticated user, should return the status code of 401
-[]: When successful, should create and store the userPerf information, if userPerf of a user didn't exist
-[]: When successful, database should contain the matching information, if userPref of a user already exists
-[]: When a field is empty, then should return status code 400
+[x]: When successful, should return the status code of 200
+[x]: When accessed by non-authenticated user, should return the status code of 401
+[x]: When successful, should create and store the userPerf information, if userPerf of a user didn't exist
+[x]: When successful, database should contain the matching information, if userPref of a user already exists
+[x]: When a field is empty, then should return status code 400
 """
+
+class TestPreferencesPUTRequest(PreferenceTest):
+
+    def test_return_status_code_200_if_okay(self):
+        expected = 200
+
+        resp_login = self.client.post('/api/user/login/', {
+                'username':'test',
+                'password':'12345'
+            }
+        )
+        token = resp_login.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        resp_preference = self.client.put('/api/user/preferences/', {
+            "age": "b,y",
+            "gender": "m,f",
+            "size": "s,m,l"
+        })
+
+        result = resp_preference.status_code
+
+        self.assertEqual(expected, result)
+
+    def test_return_status_401_if_accessed_by_unauthenticated_user(self):
+        expected = 401
+
+        resp_preference = self.client.put('/api/user/preferences/', {
+            "age": "b,y",
+            "gender": "m,f",
+            "size": "s,m,l"
+        })
+
+        result = resp_preference.status_code
+
+        self.assertEqual(expected, result)
+
+    def test_return_status_code_400_if_age_is_empty(self):
+        expected = 400
+
+        resp_login = self.client.post('/api/user/login/', {
+                'username':'test',
+                'password':'12345'
+            }
+        )
+        token = resp_login.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        resp_preference1 = self.client.put('/api/user/preferences/', {
+            "age": "",
+            "gender": "m,f",
+            "size": "s,m,l"
+        })
+
+        resp_preference2 = self.client.put('/api/user/preferences/', {
+            "gender": "m,f",
+            "size": "s,m,l"
+        })
+
+        result1 = resp_preference1.status_code
+        result2 = resp_preference2.status_code
+
+        self.assertEqual(expected, result1)
+        self.assertEqual(expected, result2)
+
+    def test_return_status_code_400_if_gender_is_empty(self):
+        expected = 400
+
+        resp_login = self.client.post('/api/user/login/', {
+                'username':'test',
+                'password':'12345'
+            }
+        )
+        token = resp_login.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        resp_preference1 = self.client.put('/api/user/preferences/', {
+            "age": "b,y",
+            "gender": "",
+            "size": "s,m,l"
+        })
+
+        resp_preference2 = self.client.put('/api/user/preferences/', {
+            "age": "b,y",
+            "size": "s,m,l"
+        })
+
+        result1 = resp_preference1.status_code
+        result2 = resp_preference2.status_code
+
+        self.assertEqual(expected, result1)
+        self.assertEqual(expected, result2)
+
+
+    def test_return_status_code_400_if_size_is_empty(self):
+        expected = 400
+
+        resp_login = self.client.post('/api/user/login/', {
+                'username':'test',
+                'password':'12345'
+            }
+        )
+        token = resp_login.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        resp_preference1 = self.client.put('/api/user/preferences/', {
+            "age": "b,y",
+            "gender": "m,f",
+            "size": ""
+        })
+
+        resp_preference2 = self.client.put('/api/user/preferences/', {
+            "age": "b,y",
+            "gender": "m,f"
+        })
+
+        result1 = resp_preference1.status_code
+        result2 = resp_preference2.status_code
+
+        self.assertEqual(expected, result1)
+        self.assertEqual(expected, result2)
+
+    def test_return_user_perf_as_new_entry_in_table_with_info_if_it_did_not_exist(self):
+        expected_db_size = 1
+        expected_age = "b,y"
+        expected_gender = "m,f"
+        expected_size = "s,m,l"
+
+        resp_login = self.client.post('/api/user/login/', {
+                'username':'test',
+                'password':'12345'
+            }
+        )
+        token = resp_login.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        self.client.put('/api/user/preferences/', {
+            "age": "b,y",
+            "gender": "m,f",
+            "size": "s,m,l"
+        })
+
+        user_perf = models.UserPerf.objects.get(pk=1)
+
+        result_db_size = models.UserPerf.objects.all().count()
+
+        result_age =  user_perf.age
+        result_gender = user_perf.gender
+        result_size = user_perf.size
+
+        self.assertEqual(expected_db_size, result_db_size)
+        self.assertEqual(expected_age, result_age)
+        self.assertEqual(expected_gender, result_gender)
+        self.assertEqual(expected_size, result_size)
+
+    def test_return_modified_user_perf_if_already_exists(self):
+        expected_db_size = 1
+        expected_age = "b,y"
+        expected_gender = "m,f"
+        expected_size = "s,m,l"
+
+        resp_login = self.client.post('/api/user/login/', {
+                'username':'test',
+                'password':'12345'
+            }
+        )
+        token = resp_login.data['token']
+
+        user = User.objects.get(pk=1)
+        userperf = models.UserPerf.objects.create(
+            user=user,
+            age="b,a",
+            gender="m",
+            size="s"
+        )
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        self.client.put('/api/user/preferences/', {
+            "age": "b,y",
+            "gender": "m,f",
+            "size": "s,m,l"
+        })
+
+        user_perf = models.UserPerf.objects.get(pk=1)
+
+        result_db_size = models.UserPerf.objects.all().count()
+
+        result_age =  user_perf.age
+        result_gender = user_perf.gender
+        result_size = user_perf.size
+
+        self.assertEqual(expected_db_size, result_db_size)
+        self.assertEqual(expected_age, result_age)
+        self.assertEqual(expected_gender, result_gender)
+        self.assertEqual(expected_size, result_size)
