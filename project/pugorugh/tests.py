@@ -212,21 +212,144 @@ Dog Model
         "size": "s"
     }
 
-    []: When all are retrieved, it should return the count of 2
-    []: if a dog with pk=1 is retrieved, it should have name of Francesca
-    []: if a dog with pk=1 is retrieved, it should have image_filename of "1.jpg"
-    []: if a dog with pk=1 is retrieved, it should have breed of Labrador
-    []: if a dog with pk=1 is retrieved it should have age of 72
-    []: if a dog with pk=1 is retrieved it should have gender of f
-    []: if a dog with pk=1 is retrieved it should have size of l
+    [x]: When all are retrieved, it should return the count of 2
+    [x]: if a dog with pk=1 is retrieved, it should have name of Francesca
+    [x]: if a dog with pk=1 is retrieved, it should have image_filename of "1.jpg"
+    [x]: if a dog with pk=1 is retrieved, it should have breed of Labrador
+    [x]: if a dog with pk=1 is retrieved it should have age of 72
+    [x]: if a dog with pk=1 is retrieved it should have gender of f
+    [x]: if a dog with pk=1 is retrieved it should have size of l
 
-    []: if a dog with pk=1 is retrieved, it should have name of Hank
-    []: if a dog with pk=1 is retrieved, it should have image_filename of "2.jpg"
-    []: if a dog with pk=1 is retrieved, it should have breed of French Bulldog
-    []: if a dog with pk=1 is retrieved it should have age of 14
-    []: if a dog with pk=1 is retrieved it should have gender of m
-    []: if a dog with pk=1 is retrieved it should have size of s
+    [x]: if a dog with pk=2 is retrieved, it should have name of Hank
+    [x]: if a dog with pk=2 is retrieved, it should have image_filename of "2.jpg"
+    [x]: if a dog with pk=2 is retrieved, it should have breed of French Bulldog
+    [x]: if a dog with pk=2 is retrieved it should have age of 14
+    [x]: if a dog with pk=2 is retrieved it should have gender of m
+    [x]: if a dog with pk=2 is retrieved it should have size of s
 """
+
+class DogTestCase(TestCase):
+    def setUp(self):
+        self.dog1 = models.Dog.objects.create(
+            name="Francesca",
+            image_filename="1.jpg",
+            breed="Labrador",
+            age=72,
+            gender="f",
+            size="l"
+        )
+
+        self.dog2 = models.Dog.objects.create(
+            name="Hank",
+            image_filename="2.jpg",
+            breed="French Bulldog",
+            age=14,
+            gender="m",
+            size="s"
+        )
+
+    def test_return_count_of_2_when_all_retrived(self):
+        expected = 2
+
+        result = models.Dog.objects.all().count()
+
+        self.assertEqual(expected, result)
+
+
+    def test_return_dog_pk_1_with_name_francesca(self):
+        expected = 'Francesca'
+
+        dog = models.Dog.objects.get(pk=1)
+        result = dog.name
+
+        self.assertEqual(expected, result)
+
+    def test_return_dog_pk_1_with_image_file_1_jpg(self):
+        expected = '1.jpg'
+
+        dog = models.Dog.objects.get(pk=1)
+        result = dog.image_filename
+
+    def test_return_dog_pk_1_with_breed_labrador(self):
+        expected = 'Labrador'
+
+        dog = models.Dog.objects.get(pk=1)
+        result = dog.breed
+
+        self.assertEqual(expected, result)
+
+    def test_return_dog_pk_1_with_age_72(self):
+        expected = 72
+
+        dog = models.Dog.objects.get(pk=1)
+        result = dog.age
+
+        self.assertEqual(expected, result)
+
+    def test_return_dog_pk_1_with_gender_f(self):
+        expected = 'f'
+
+        dog = models.Dog.objects.get(pk=1)
+        result = dog.gender
+
+        self.assertEqual(expected, result)
+
+    def test_return_dog_pk_1_with_size_l(self):
+        expected = 'l'
+
+        dog = models.Dog.objects.get(pk=1)
+        result = dog.size
+
+        self.assertEqual(expected, result)
+
+    def test_return_dog_pk_2_with_name_hank(self):
+        expected = 'Hank'
+
+        dog = models.Dog.objects.get(pk=2)
+        result = dog.name
+
+        self.assertEqual(expected, result)
+
+    def test_return_dog_pk_2_with_image_file_2_jpg(self):
+        expected = '2.jpg'
+
+        dog = models.Dog.objects.get(pk=2)
+        result = dog.image_filename
+
+        self.assertEqual(expected, result)
+
+    def test_return_dog_pk_2_with_breed_french_bulldog(self):
+        expected = 'French Bulldog'
+
+        dog = models.Dog.objects.get(pk=2)
+        result = dog.breed
+
+        self.assertEqual(expected, result)
+
+    def test_return_dog_pk_2_with_age_14(self):
+        expected = 14
+
+        dog = models.Dog.objects.get(pk=2)
+        result = dog.age
+
+        self.assertEqual(expected, result)
+
+    def test_return_dog_pk_2_with_gender_m(self):
+        expected = 'm'
+
+        dog = models.Dog.objects.get(pk=2)
+        result = dog.gender
+
+        self.assertEqual(expected, result)
+
+    def test_return_dog_pk_2_with_size_s(self):
+        expected = 's'
+
+        dog = models.Dog.objects.get(pk=2)
+        result = dog.size
+
+        self.assertEqual(expected, result)
+
 
 # -----------
 # API TESTS
