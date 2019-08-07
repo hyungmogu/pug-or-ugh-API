@@ -195,7 +195,7 @@ class TestPreferencesGETRequest(PreferenceTest):
 """
 "/api/user/preferences"
 
-POST Request
+PUT Request
 []: When successful, should return the status code of 200
 []: When accessed by non-authenticated user, should return the status code of 401
 []: When successful, should create and store the userPerf information, if userPerf of a user didn't exist
