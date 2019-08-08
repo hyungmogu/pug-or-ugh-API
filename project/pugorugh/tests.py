@@ -402,18 +402,18 @@ Given that the following sets of data are added to database
     }
 
 
-[]: When all are retrieved, it should return the count of 3
-[]: if user_dog with pk=1 is retrieved, it should return user with username hello
-[]: if user_dog with pk=1 is retrieved, it should return dog with name Francesco
-[]: if user_dog with pk=1 is retrieved, it should return status with l as its value
+[x]: When all are retrieved, it should return the count of 3
+[x]: if user_dog with pk=1 is retrieved, it should return user with username hello
+[x]: if user_dog with pk=1 is retrieved, it should return dog with name Francesco
+[x]: if user_dog with pk=1 is retrieved, it should return status with l as its value
 
-[]: if user_dog with pk=2 is retrieved, it should return user with username of hello
-[]: if user_dog with pk=2 is retrieved, it should return dog with name of Hank
-[]: if user_dog with pk=2 is retrieved, it should return status with d as its value
+[x]: if user_dog with pk=2 is retrieved, it should return user with username of hello
+[x]: if user_dog with pk=2 is retrieved, it should return dog with name of Hank
+[x]: if user_dog with pk=2 is retrieved, it should return status with d as its value
 
-[]: if user_dog with pk=3 is retrieved, it should return user with username of world
-[]: if user_dog with pk=3 is retrieved, it should return dog with name Francesco
-[]: if user_dog with pk=3 is retrieved, it should return status with l as its value
+[x]: if user_dog with pk=3 is retrieved, it should return user with username of world
+[x]: if user_dog with pk=3 is retrieved, it should return dog with name Francesco
+[x]: if user_dog with pk=3 is retrieved, it should return status with l as its value
 
 """
 
@@ -684,7 +684,7 @@ class TestPreferencesGETRequest(PreferenceTest):
 
 PUT Request
 [x]: When successful, should return the status code of 200
-[x]: When accessed by non-authenticated user, should return the status code of 401
+[x]: When accessed by non-authenticated user, should return status code of 401
 [x]: When successful, should create and store the userPerf information, if userPerf of a user didn't exist
 [x]: When successful, database should contain the matching information, if userPref of a user already exists
 [x]: When a field is empty, then should return status code 400
@@ -884,3 +884,45 @@ class TestPreferencesPUTRequest(PreferenceTest):
         self.assertEqual(expected_age, result_age)
         self.assertEqual(expected_gender, result_gender)
         self.assertEqual(expected_size, result_size)
+
+
+"""
+/api/dogs/{id}/liked
+
+PUT REQUEST
+Given the following data
+
+ dog1 = {
+        "name": "Francesca",
+        "image_filename": "1.jpg",
+        "breed": "Labrador",
+        "age": 72,
+        "gender": "f",
+        "size": "l"
+    }
+
+dog2 = {
+    "name": "Hank",
+    "image_filename": "2.jpg",
+    "breed": "French Bulldog",
+    "age": 14,
+    "gender": "m",
+    "size": "s"
+}
+
+user1 = {
+    username='hello',
+    password='hello'
+}
+
+user2 = {
+    username='world',
+    password='world'
+}
+
+[]: When successful should return the status code of 200
+[]: When accessed by non-authenticated user, it should return status code 401
+[]: When successful, should create and store information, if the information didn't exist
+[]: When successful, database should contain the matching information, if the entry of id already exists
+[]: When field is empty, should return status code 400
+"""
