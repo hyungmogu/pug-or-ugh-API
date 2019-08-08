@@ -14,3 +14,9 @@ class Dog(models.Model):
     age = models.IntegerField(default=0)
     gender = models.CharField(max_length=1)
     size = models.CharField(max_length=2)
+
+
+class UserDog(models.Model):
+    user = models.ForeignKey('auth.User')
+    dog = models.ForeignKey('Dog')
+    status = models.CharField(max_length=10)
