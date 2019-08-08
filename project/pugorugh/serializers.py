@@ -32,3 +32,10 @@ class DogSerializer(serializers.ModelSerializer):
     class Meta:
         model=models.Dog
 
+
+class UserDogSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = (
+            'status',
+        )
+        model=models.UserDog

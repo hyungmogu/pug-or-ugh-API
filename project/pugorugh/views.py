@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 
+from django.shortcuts import get_object_or_404
 from rest_framework import permissions, mixins, viewsets
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView, UpdateAPIView
 
 from . import serializers
 from . import models
@@ -29,3 +30,20 @@ class RetrieveDogView(RetrieveAPIView):
     queryset = models.Dog.objects.all()
     permission_classes = (permissions.AllowAny,)
     serializer_class = serializers.DogSerializer
+
+
+class RetrieveUpdateDogLikeView(UpdateAPIView):
+    model = models.UserDog
+    # permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = serializers.UserDogSerializer
+
+    def get_object(self):
+        dog = get_object_or_404(models.Dog, pk=self.kwargs.get('pk'))
+        print(dog)
+        print('!!!!!!')
+        print('hello')
+        try:
+            obj = self.model.objects.get(user=self.request.user, dog=dog)
+        except self.model.DoesNotExist:
+            obj = self.model.objects.create(user=self.request.user, dog=dog)
+        return obj
