@@ -350,6 +350,73 @@ class DogTestCase(TestCase):
 
         self.assertEqual(expected, result)
 
+"""
+UserDog Model
+
+Given that the following sets of data are added to database
+
+    dog1 = {
+        "name": "Francesca",
+        "image_filename": "1.jpg",
+        "breed": "Labrador",
+        "age": 72,
+        "gender": "f",
+        "size": "l"
+    }
+
+    dog2 = {
+        "name": "Hank",
+        "image_filename": "2.jpg",
+        "breed": "French Bulldog",
+        "age": 14,
+        "gender": "m",
+        "size": "s"
+    }
+
+    user1 = {
+        username='hello',
+        password='hello'
+    }
+
+    user2 = {
+        username='world',
+        password='world'
+    }
+
+    user_dog1 = {
+        user: user1,
+        dog: dog1,
+        status: 'l'
+    }
+
+    user_dog2 = {
+        user: user1,
+        dog: dog2,
+        status 'd'
+    }
+
+    user_dog3 = {
+        user: user2,
+        dog: dog1,
+        status: 'l'
+    }
+
+
+[]: When all are retrieved, it should return the count of 3
+[]: if user_dog with pk=1 is retrieved, it should return user with username hello
+[]: if user_dog with pk=1 is retrieved, it should return dog with name Francesco
+[]: if user_dog with pk=1 is retrieved, it should return status with l as its value
+
+[]: if user_dog with pk=2 is retrieved, it should return user with username of hello
+[]: if user_dog with pk=2 is retrieved, it should return dog with name of Hank
+[]: if user_dog with pk=2 is retrieved, it should return status with d as its value
+
+[]: if user_dog with pk=3 is retrieved, it should return user with username of world
+[]: if user_dog with pk=3 is retrieved, it should return dog with name Francesco
+[]: if user_dog with pk=3 is retrieved, it should return status with l as its value
+
+"""
+
 
 # -----------
 # API TESTS
