@@ -418,6 +418,135 @@ Given that the following sets of data are added to database
 """
 
 
+
+class DogTestCase(TestCase):
+    def setUp(self):
+        self.dog1 = models.Dog.objects.create(
+            name="Francesca",
+            image_filename="1.jpg",
+            breed="Labrador",
+            age=72,
+            gender="f",
+            size="l"
+        )
+
+        self.dog2 = models.Dog.objects.create(
+            name="Hank",
+            image_filename="2.jpg",
+            breed="French Bulldog",
+            age=14,
+            gender="m",
+            size="s"
+        )
+
+        self.user1 = User.objects.create(
+            username='hello',
+            password='hello'
+        )
+
+        self.user2 = User.objects.create(
+            username='world',
+            password='world'
+        )
+
+
+        self.user_dog1 = models.UserDog.objects.create(
+            user=self.user1,
+            dog=self.dog1,
+            status= 'l'
+        )
+
+        self.user_dog2 = models.UserDog.objects.create(
+            user=self.user1,
+            dog=self.dog2,
+            status='d'
+        )
+
+        self.user_dog3 = models.UserDog.objects.create(
+            user=self.user2,
+            dog=self.dog1,
+            status='l'
+        )
+
+    def test_return_count_of_3_when_all_user_dog_is_retrived(self):
+        expected = 3
+
+        result = models.UserDog.objects.all().count()
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_dog_pk_1_with_user_username_valued_hello(self):
+        expected = 'hello'
+
+        user_dog = models.UserDog.objects.get(pk=1)
+        result = user_dog.user.username
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_dog_pk_1_with_dog_name_valued_francesca(self):
+        expected = 'Francesca'
+
+        user_dog = models.UserDog.objects.get(pk=1)
+        result = user_dog.dog.name
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_dog_pk_1_with_status_l_as_its_value(self):
+        expected = 'l'
+
+        user_dog = models.UserDog.objects.get(pk=1)
+        result = user_dog.status
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_dog_pk_2_with_user_username_valued_hello(self):
+        expected = 'hello'
+
+        user_dog = models.UserDog.objects.get(pk=2)
+        result = user_dog.user.username
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_dog_pk_2_with_dog_name_valued_hank(self):
+        expected = 'Hank'
+
+        user_dog = models.UserDog.objects.get(pk=2)
+        result = user_dog.dog.name
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_dog_pk_2_with_status_d_as_its_value(self):
+        expected = 'd'
+
+        user_dog = models.UserDog.objects.get(pk=2)
+        result = user_dog.status
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_dog_pk_3_with_user_username_valued_world(self):
+        expected = 'world'
+
+        user_dog = models.UserDog.objects.get(pk=3)
+        result = user_dog.user.username
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_dog_pk_3_with_dog_name_valued_francesca(self):
+        expected = 'Francesca'
+
+        user_dog = models.UserDog.objects.get(pk=3)
+        result = user_dog.dog.name
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_dog_pk_3_with_status_d_as_its_value(self):
+        expected = 'l'
+
+        user_dog = models.UserDog.objects.get(pk=3)
+        result = user_dog.status
+
+        self.assertEqual(expected, result)
+
 # -----------
 # API TESTS
 # -----------
