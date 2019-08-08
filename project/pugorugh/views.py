@@ -34,14 +34,11 @@ class RetrieveDogView(RetrieveAPIView):
 
 class RetrieveUpdateDogLikeView(UpdateAPIView):
     model = models.UserDog
-    # permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.UserDogSerializer
 
     def get_object(self):
         dog = get_object_or_404(models.Dog, pk=self.kwargs.get('pk'))
-        print(dog)
-        print('!!!!!!')
-        print('hello')
         try:
             obj = self.model.objects.get(user=self.request.user, dog=dog)
         except self.model.DoesNotExist:
