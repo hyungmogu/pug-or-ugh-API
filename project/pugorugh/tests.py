@@ -939,7 +939,7 @@ class TestDogLikedPUTRequest(TestCase):
             },
             format='json'
         )
-
+        self.user = User.objects.get(username='test')
         self.dog = models.Dog.objects.create(
             name="Francesca",
             image_filename="1.jpg",
@@ -957,15 +957,14 @@ class TestDogLikedPUTRequest(TestCase):
                 'password':'12345'
             }
         )
-
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        resp_preference = self.client.put('/api/dog/1/liked/', {
+        resp_like = self.client.put('/api/dog/1/liked/', {
             "status": "d"
         })
 
-        result = resp_preference.status_code
+        result = resp_like.status_code
 
         self.assertEqual(expected, result)
 
@@ -1024,7 +1023,7 @@ class TestDogLikedPUTRequest(TestCase):
 
         result_db_size = models.UserDog.objects.all().count()
 
-        result_status =  user_dog.status
+        result_status = user_dog.status
 
         self.assertEqual(expected_db_size, result_db_size)
         self.assertEqual(expected_status, result_status)
@@ -1041,14 +1040,11 @@ class TestDogLikedPUTRequest(TestCase):
 
         token = resp_login.data['token']
 
-        user = User.objects.get(username='test')
-        use_dog = models.UserDog.objects.create(
-            user=user,
-            dog=self.dog,
-            status="l"
-        )
-
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        self.client.put('/api/dog/1/liked/', {
+            "status": "l"
+        })
+
         self.client.put('/api/dog/1/liked/', {
             "status": "d"
         })
