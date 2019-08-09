@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
-
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions, viewsets, status
 from rest_framework.response import Response
+from rest_framework.exceptions import NotFound
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView, UpdateAPIView
 
 from . import serializers
@@ -146,4 +147,20 @@ class RetrieveUpdateDogUndecidedView(UpdateAPIView):
         serializer.save()
 
         # use serializer to retrieve user dog object in JSON data format
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class RetrieveDogNextLikeView(RetrieveAPIView):
+    model = models.UserDog
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = serializers.UserDogSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        obj = self.model.objects.filter(Q(user=request.user)&Q(status='l')&Q(pk__gt=self.kwargs.get('pk'))).first()
+
+        if not obj:
+            raise NotFound
+
+        serializer = self.serializer_class(obj)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
