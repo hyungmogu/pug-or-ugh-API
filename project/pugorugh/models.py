@@ -19,4 +19,4 @@ class Dog(models.Model):
 class UserDog(models.Model):
     user = models.ForeignKey('auth.User')
     dog = models.ForeignKey('Dog')
-    status = models.CharField(max_length=10)
+    status = models.CharField(max_length=10, blank=True)

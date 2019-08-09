@@ -9,6 +9,7 @@ import pugorugh.views as views
 
 # API endpoints
 urlpatterns = format_suffix_patterns([
+    url(r'^api/dog/(?P<pk>\d+)/undecided/$', views.RetrieveUpdateDogUndecidedView.as_view(), name='dog-undecided'),
     url(r'^api/dog/(?P<pk>\d+)/disliked/$', views.RetrieveUpdateDogDislikeView.as_view(), name='dog-dislike'),
     url(r'^api/dog/(?P<pk>\d+)/liked/$', views.RetrieveUpdateDogLikeView.as_view(), name='dog-like'),
     url(r'^api/dog/(?P<pk>\d+)/$', views.RetrieveDogView.as_view(), name='dog'),

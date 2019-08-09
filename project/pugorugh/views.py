@@ -109,3 +109,41 @@ class RetrieveUpdateDogDislikeView(UpdateAPIView):
 
         # use serializer to retrieve user dog object in JSON data format
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class RetrieveUpdateDogUndecidedView(UpdateAPIView):
+    model = models.UserDog
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = serializers.UserDogSerializer
+
+    def get_object(self):
+        dog = get_object_or_404(models.Dog, pk=self.kwargs.get('pk'))
+        try:
+            obj = self.model.objects.get(user=self.request.user, dog=dog)
+        except self.model.DoesNotExist:
+            obj = self.model.objects.create(user=self.request.user, dog=dog)
+        return obj
+
+    def update(self, request, *args, **kwargs):
+
+        # update object
+        dog_pk = self.kwargs.get('pk')
+        user_pk = request.user.pk
+        req_status = ''
+        dog = get_object_or_404(models.Dog, pk=dog_pk)
+
+        try:
+            user_dog = self.model.objects.get(user=request.user, dog=dog)
+        except self.model.DoesNotExist:
+            user_dog = self.model.objects.create(user=request.user, dog=dog)
+
+        serializer = self.serializer_class(user_dog, data={
+            "dog": dog_pk,
+            "user": user_pk,
+            "status": req_status
+        })
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        # use serializer to retrieve user dog object in JSON data format
+        return Response(serializer.data, status=status.HTTP_200_OK)
