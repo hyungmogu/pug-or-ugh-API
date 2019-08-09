@@ -1344,16 +1344,16 @@ dog2 = {
     "size": "s"
 }
 
-[]: When not authenticated, return status code of 401
-[]: When empty, return status code of 404
-[]: When out of bound, return status code of 404
-[]: when successful, return status code 200
-[]: When successful, return item with id of 4
-[]: When successful, return item with username of 'test'
-[]: When successful, return item with dog name of 'Hank'
+[x]: When not authenticated, return status code of 401
+[x]: When empty, return status code of 404
+[x]: When out of bound, return status code of 404
+[x]: when successful, return status code 200
+[x]: When successful, return item with id of 4
+[x]: When successful, return item with username of 'test'
+[x]: When successful, return item with dog name of 'Hank'
 """
 
-class TestNextDogLikedGestRequest(TestCase):
+class TestNextDogLikedGETRequest(TestCase):
     def setUp(self):
         self.client = APIClient()
 
@@ -1374,6 +1374,9 @@ class TestNextDogLikedGestRequest(TestCase):
             },
             format='json'
         )
+
+        self.user1 = models.User.objects.get(username='test')
+        self.user2 = models.User.objects.get(username='world')
 
         self.dog1 = models.Dog.objects.create(
             name='Francesca',
@@ -1407,11 +1410,11 @@ class TestNextDogLikedGestRequest(TestCase):
 
         models.UserDog.objects.create(
             user=self.user1,
-            dog=self.dog2
+            dog=self.dog2,
             status='d'
         )
 
-        models.UserDog.objets.create(
+        models.UserDog.objects.create(
             user=self.user1,
             dog=self.dog2,
             status='l'
@@ -1420,15 +1423,6 @@ class TestNextDogLikedGestRequest(TestCase):
     def test_return_status_code_401_if_not_authenticated(self):
         expected = 401
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
-            }
-        )
-
-        token = resp_login.data['token']
-
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
         response = self.client.get('/api/dog/1/liked/next/')
         result = response.status_code
 
