@@ -947,9 +947,7 @@ class TestDogLikedPUTRequest(TestCase):
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        resp_like = self.client.put('/api/dog/1/liked/', {
-            "status": "d"
-        })
+        resp_like = self.client.put('/api/dog/1/liked/')
 
         result = resp_like.status_code
 
@@ -1008,6 +1006,138 @@ class TestDogLikedPUTRequest(TestCase):
         )
 
         self.client.put('/api/dog/1/liked/')
+
+        user_dog = models.UserDog.objects.get(pk=1)
+
+        result_db_size = models.UserDog.objects.all().count()
+
+        result_status =  user_dog.status
+
+        self.assertEqual(expected_db_size, result_db_size)
+        self.assertEqual(expected_status, result_status)
+
+
+
+"""
+/api/dogs/{id}/disliked
+
+PUT REQUEST
+Given the following data
+
+dog = {
+        "name": "Francesca",
+        "image_filename": "1.jpg",
+        "breed": "Labrador",
+        "age": 72,
+        "gender": "f",
+        "size": "l"
+    }
+
+user1 = {
+    username='test',
+    password='12345'
+}
+
+
+[x]: When successful should return the status code of 200
+[x]: When accessed by non-authenticated user, it should return status code 401
+[x]: When successful, should create and store information, if the information didn't exist
+[x]: When successful, database should contain the matching information, if the entry of id already exists
+[x]: When field is empty, should return status code 400
+"""
+
+class TestDogDislikedPUTRequest(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.resp_register = self.client.post(
+            '/api/user/',
+            {
+                'username':'test',
+                'password':'12345'
+            },
+            format='json'
+        )
+        self.user = User.objects.get(username='test')
+        self.dog = models.Dog.objects.create(
+            name="Francesca",
+            image_filename="1.jpg",
+            breed="Labrador",
+            age=72,
+            gender="f",
+            size="l"
+        )
+
+    def test_return_status_code_200_if_okay(self):
+        expected = 200
+
+        resp_login = self.client.post('/api/user/login/', {
+                'username':'test',
+                'password':'12345'
+            }
+        )
+        token = resp_login.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        resp_like = self.client.put('/api/dog/1/disliked/')
+
+        result = resp_like.status_code
+
+        self.assertEqual(expected, result)
+
+    def test_return_status_401_if_accessed_by_unauthenticated_user(self):
+        expected = 401
+
+        resp_liked = self.client.put('/api/dog/1/disliked/')
+
+        result = resp_liked.status_code
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_dog_as_new_entry_in_the_table_if_it_did_not_exist(self):
+        expected_db_size = 1
+        expected_status = 'd'
+
+        resp_login = self.client.post('/api/user/login/', {
+                'username':'test',
+                'password':'12345'
+            }
+        )
+
+        token = resp_login.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        self.client.put('/api/dog/1/disliked/')
+
+        user_dog = models.UserDog.objects.get(pk=1)
+
+        result_db_size = models.UserDog.objects.all().count()
+
+        result_status = user_dog.status
+
+        self.assertEqual(expected_db_size, result_db_size)
+        self.assertEqual(expected_status, result_status)
+
+    def test_return_modified_user_perf_if_already_exists(self):
+        expected_db_size = 1
+        expected_status = 'd'
+
+        resp_login = self.client.post('/api/user/login/', {
+                'username':'test',
+                'password':'12345'
+            }
+        )
+
+        token = resp_login.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        models.UserDog.objects.create(
+            user=self.user,
+            dog=self.dog,
+            status='l'
+        )
+
+        self.client.put('/api/dog/1/disliked/')
 
         user_dog = models.UserDog.objects.get(pk=1)
 
