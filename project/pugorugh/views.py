@@ -164,3 +164,18 @@ class RetrieveDogNextLikeView(RetrieveAPIView):
         serializer = self.serializer_class(obj)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class RetrieveDogNextDislikeView(RetrieveAPIView):
+    model = models.UserDog
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = serializers.UserDogSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        obj = self.model.objects.filter(Q(user=request.user)&Q(status='d')&Q(dog__pk__gt=self.kwargs.get('pk'))).first()
+
+        if not obj:
+            raise NotFound
+
+        serializer = self.serializer_class(obj)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
