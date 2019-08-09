@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 
 from django.shortcuts import get_object_or_404
-from rest_framework import permissions, mixins, viewsets
+from rest_framework import permissions, viewsets, status
+from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView, UpdateAPIView
 
 from . import serializers
@@ -44,3 +45,28 @@ class RetrieveUpdateDogLikeView(UpdateAPIView):
         except self.model.DoesNotExist:
             obj = self.model.objects.create(user=self.request.user, dog=dog)
         return obj
+
+    def update(self, request, *args, **kwargs):
+
+        # update object
+        dog_pk = self.kwargs.get('pk')
+        user_pk = request.user.pk
+        req_status = request.data.get('status')
+        dog = get_object_or_404(models.Dog, pk=dog_pk)
+
+        try:
+            user_dog = self.model.objects.get(user=request.user, dog=dog)
+        except self.model.DoesNotExist:
+            user_dog = self.model.objects.create(user=request.user, dog=dog)
+
+        serializer = self.serializer_class(user_dog, data={
+            "dog": dog_pk,
+            "user": user_pk,
+            "status": req_status
+        })
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        # use serializer to retrieve user dog object in JSON data format
+        return Response(serializer.data, status=status.HTTP_200_OK)
