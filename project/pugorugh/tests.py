@@ -1278,3 +1278,76 @@ class TestDogUndecidedPUTRequest(TestCase):
 
         self.assertEqual(expected_db_size, result_db_size)
         self.assertEqual(expected_status, result_status)
+
+
+
+"""
+/api/dogs/{id}/liked/next
+
+GET REQUEST
+Given the endpoint '/api/dog/1/liked/next' with following data
+
+[
+    {
+        "id": 1,
+        "user":1,
+        "dog": 1,
+        "status": "l"
+    },
+    {
+        "id": 2,
+        "user": 2,
+        "dog": 1,
+        "status": "l"
+    },
+    {
+        "id": 3,
+        "user": 1,
+        "dog": 2,
+        "status": "d"
+    },
+    {
+        "id": 4,
+        "user": 1,
+        "dog": 2,
+        "status": "l"
+    }
+
+]
+
+user1 = {
+    username='test',
+    password='12345'
+}
+
+user2 = {
+    username='world',
+    password='world'
+}
+
+
+dog1 = {
+    "name": "Francesca",
+    "image_filename": "1.jpg",
+    "breed": "Labrador",
+    "age": 72,
+    "gender": "f",
+    "size": "l"
+}
+
+dog2 = {
+    "name": "Hank",
+    "image_filename": "2.jpg",
+    "breed": "French Bulldog",
+    "age": 14,
+    "gender": "m",
+    "size": "s"
+}
+
+[]: When empty, the returned response should have status code of 404
+[]: When out of bound, the returned response should have status code of 404
+[]: when successful, it should return status code 200
+[]: When successful, the returned item should have id of 4
+[]: When successful, the returned item should have user name of 'test'
+[]: When successful, the returned item should have dog name of 'Hank'
+"""
