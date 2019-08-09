@@ -892,7 +892,7 @@ class TestPreferencesPUTRequest(PreferenceTest):
 PUT REQUEST
 Given the following data
 
- dog1 = {
+dog = {
         "name": "Francesca",
         "image_filename": "1.jpg",
         "breed": "Labrador",
@@ -901,24 +901,11 @@ Given the following data
         "size": "l"
     }
 
-dog2 = {
-    "name": "Hank",
-    "image_filename": "2.jpg",
-    "breed": "French Bulldog",
-    "age": 14,
-    "gender": "m",
-    "size": "s"
-}
-
 user1 = {
-    username='hello',
-    password='hello'
+    username='test',
+    password='12345'
 }
 
-user2 = {
-    username='world',
-    password='world'
-}
 
 [x]: When successful should return the status code of 200
 [x]: When accessed by non-authenticated user, it should return status code 401
@@ -971,36 +958,11 @@ class TestDogLikedPUTRequest(TestCase):
     def test_return_status_401_if_accessed_by_unauthenticated_user(self):
         expected = 401
 
-        resp_liked = self.client.put('/api/dog/1/liked/', {
-            "status": "d"
-        })
+        resp_liked = self.client.put('/api/dog/1/liked/')
 
         result = resp_liked.status_code
 
         self.assertEqual(expected, result)
-
-    def test_return_status_code_400_if_status_is_empty(self):
-        expected = 400
-
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
-            }
-        )
-        token = resp_login.data['token']
-
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        resp_like1 = self.client.put('/api/dog/1/liked/', {
-            "status": ""
-        })
-
-        resp_like2 = self.client.put('/api/dog/1/liked/')
-
-        result1 = resp_like1.status_code
-        result2 = resp_like2.status_code
-
-        self.assertEqual(expected, result1)
-        self.assertEqual(expected, result2)
 
     def test_return_user_dog_as_new_entry_in_the_table_if_it_did_not_exist(self):
         expected_db_size = 1
@@ -1015,9 +977,7 @@ class TestDogLikedPUTRequest(TestCase):
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        self.client.put('/api/dog/1/liked/', {
-            "status": "l"
-        })
+        self.client.put('/api/dog/1/liked/')
 
         user_dog = models.UserDog.objects.get(pk=1)
 
@@ -1030,7 +990,7 @@ class TestDogLikedPUTRequest(TestCase):
 
     def test_return_modified_user_perf_if_already_exists(self):
         expected_db_size = 1
-        expected_status = "d"
+        expected_status = 'l'
 
         resp_login = self.client.post('/api/user/login/', {
                 'username':'test',
@@ -1041,13 +1001,13 @@ class TestDogLikedPUTRequest(TestCase):
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        self.client.put('/api/dog/1/liked/', {
-            "status": "l"
-        })
+        models.UserDog.objects.create(
+            user=self.user,
+            dog=self.dog,
+            status='d'
+        )
 
-        self.client.put('/api/dog/1/liked/', {
-            "status": "d"
-        })
+        self.client.put('/api/dog/1/liked/')
 
         user_dog = models.UserDog.objects.get(pk=1)
 

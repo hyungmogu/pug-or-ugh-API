@@ -51,7 +51,7 @@ class RetrieveUpdateDogLikeView(UpdateAPIView):
         # update object
         dog_pk = self.kwargs.get('pk')
         user_pk = request.user.pk
-        req_status = request.data.get('status')
+        req_status = 'l'
         dog = get_object_or_404(models.Dog, pk=dog_pk)
 
         try:
