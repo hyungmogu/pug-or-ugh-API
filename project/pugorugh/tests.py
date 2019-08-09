@@ -1517,3 +1517,242 @@ class TestNextDogLikedGETRequest(TestCase):
 
         self.assertEqual(expected, result)
 
+
+
+
+"""
+/api/dogs/{id}/disliked/next/
+
+GET REQUEST
+Given an example endpoint '/api/dog/1/disliked/next' with the following UserDog data
+
+[
+    {
+        "id": 1,
+        "user":1,
+        "dog": 1,
+        "status": "d"
+    },
+    {
+        "id": 2,
+        "user": 2,
+        "dog": 1,
+        "status": "d"
+    },
+    {
+        "id": 3,
+        "user": 1,
+        "dog": 2,
+        "status": "l"
+    },
+    {
+        "id": 4,
+        "user": 1,
+        "dog": 2,
+        "status": "d"
+    }
+
+]
+
+user1 = {
+    username='test',
+    password='12345'
+}
+
+user2 = {
+    username='world',
+    password='world'
+}
+
+
+dog1 = {
+    "name": "Francesca",
+    "image_filename": "1.jpg",
+    "breed": "Labrador",
+    "age": 72,
+    "gender": "f",
+    "size": "l"
+}
+
+dog2 = {
+    "name": "Hank",
+    "image_filename": "2.jpg",
+    "breed": "French Bulldog",
+    "age": 14,
+    "gender": "m",
+    "size": "s"
+}
+
+[x]: When not authenticated, return status code of 401
+[x]: When empty, return status code of 404
+[x]: When out of bound, return status code of 404
+[x]: when successful, return status code 200
+[x]: When successful, return item with id of 4
+[x]: When successful, return item with username of 'test'
+[x]: When successful, return item with dog name of 'Hank'
+"""
+
+class TestNextDogDislikedGETRequest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+        self.client.post(
+            '/api/user/',
+            {
+                'username':'test',
+                'password':'12345'
+            },
+            format='json'
+        )
+
+        self.client.post(
+            '/api/user/',
+            {
+                'username':'world',
+                'password':'world'
+            },
+            format='json'
+        )
+
+        self.user1 = models.User.objects.get(username='test')
+        self.user2 = models.User.objects.get(username='world')
+
+        self.dog1 = models.Dog.objects.create(
+            name='Francesca',
+            image_filename='1.jpg',
+            breed='Labrador',
+            age=72,
+            gender='f',
+            size='l'
+        )
+
+        self.dog2 = models.Dog.objects.create(
+            name='Hank',
+            image_filename='2.jpg',
+            breed='French Bulldog',
+            age=14,
+            gender='m',
+            size='s'
+        )
+
+        models.UserDog.objects.create(
+            user=self.user1,
+            dog=self.dog1,
+            status='d'
+        )
+
+        models.UserDog.objects.create(
+            user=self.user2,
+            dog=self.dog1,
+            status='d'
+        )
+
+        models.UserDog.objects.create(
+            user=self.user1,
+            dog=self.dog2,
+            status='l'
+        )
+
+        models.UserDog.objects.create(
+            user=self.user1,
+            dog=self.dog2,
+            status='d'
+        )
+
+    def test_return_status_code_401_if_not_authenticated(self):
+        expected = 401
+
+        response = self.client.get('/api/dog/1/disliked/next/')
+        result = response.status_code
+
+        self.assertEqual(expected, result)
+
+    def test_return_status_code_404_if_empty_or_out_of_bound(self):
+        expected = 404
+
+        resp_login = self.client.post('/api/user/login/', {
+                'username':'test',
+                'password':'12345'
+            }
+        )
+
+        token = resp_login.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+
+        response = self.client.get('/api/dog/10/disliked/next/')
+        result = response.status_code
+
+        self.assertEqual(expected, result)
+
+    def test_return_status_code_200_if_successful(self):
+        expected = 200
+
+        resp_login = self.client.post('/api/user/login/', {
+                'username':'test',
+                'password':'12345'
+            }
+        )
+
+        token = resp_login.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        response = self.client.get('/api/dog/1/disliked/next/')
+        result = response.status_code
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_dog_object_with_id_4_if_successful(self):
+        expected = 4
+
+        resp_login = self.client.post('/api/user/login/', {
+                'username':'test',
+                'password':'12345'
+            }
+        )
+
+        token = resp_login.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        response = self.client.get('/api/dog/1/disliked/next/')
+        result = response.data['id']
+
+        self.assertEqual(expected, result)
+
+
+    def test_return_user_dog_object_with_user_name_test_if_successful(self):
+        expected = 'test'
+
+        resp_login = self.client.post('/api/user/login/', {
+                'username':'test',
+                'password':'12345'
+            }
+        )
+
+        token = resp_login.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        response = self.client.get('/api/dog/1/disliked/next/')
+        user = models.User.objects.get(pk=response.data['user'])
+        result = user.username
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_dog_object_with_dog_name_hank_if_successful(self):
+        expected = 'Hank'
+
+        resp_login = self.client.post('/api/user/login/', {
+                'username':'test',
+                'password':'12345'
+            }
+        )
+
+        token = resp_login.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        response = self.client.get('/api/dog/1/disliked/next/')
+        dog = models.Dog.objects.get(pk=response.data['dog'])
+        result = dog.name
+
+        self.assertEqual(expected, result)
+
