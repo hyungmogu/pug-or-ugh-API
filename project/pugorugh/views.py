@@ -156,7 +156,7 @@ class RetrieveDogNextLikeView(RetrieveAPIView):
     serializer_class = serializers.UserDogSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        obj = self.model.objects.filter(Q(user=request.user)&Q(status='l')&Q(pk__gt=self.kwargs.get('pk'))).first()
+        obj = self.model.objects.filter(Q(user=request.user)&Q(status='l')&Q(dog__pk__gt=self.kwargs.get('pk'))).first()
 
         if not obj:
             raise NotFound
