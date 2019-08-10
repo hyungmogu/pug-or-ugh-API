@@ -28,7 +28,7 @@ class UserPerfView(RetrieveUpdateAPIView):
 
         return obj
 
-class RetrieveDogView(UpdateAPIView):
+class UpdateDogView(UpdateAPIView):
     model = models.UserDog
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.UserDogSerializer
@@ -79,13 +79,13 @@ class RetrieveNextDogView(RetrieveAPIView):
 
     def get_object(self):
         pk = int(self.kwargs.get('pk'))
-        get_type = self.kwargs.get('type')
+        status_type = self.kwargs.get('type')
 
-        if get_type == 'liked':
+        if status_type == 'liked':
             status = 'l'
-        elif get_type == 'disliked':
+        elif status_type == 'disliked':
             status = 'd'
-        elif get_type == 'undecided':
+        elif status_type == 'undecided':
             status = ''
 
         if not pk:
