@@ -151,53 +151,31 @@ class RetrieveUpdateDogUndecidedView(UpdateAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class RetrieveDogNextLikeView(RetrieveAPIView):
+class RetrieveNextDogView(RetrieveAPIView):
     model = models.Dog
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.DogSerializer
 
     def get_object(self):
         pk = int(self.kwargs.get('pk'))
+        get_type = self.kwargs.get('type')
+
+        if get_type == 'liked':
+            status = 'l'
+        elif get_type == 'disliked':
+            status = 'd'
+        elif get_type == 'undecided':
+            status = ''
 
         if not pk:
             raise NotFound
 
-        temp_obj = models.UserDog.objects.filter(Q(user=self.request.user)&Q(status='l')&Q(dog__pk__gt=self.kwargs.get('pk'))).select_related('dog').first()
+        temp_obj = models.UserDog.objects \
+                    .filter(Q(user=self.request.user)&Q(status=status)&Q(dog__pk__gt=self.kwargs.get('pk'))) \
+                    .select_related('dog').first()
 
-        obj = temp_obj.dog
-
-        return obj
-
-class RetrieveDogNextDislikeView(RetrieveAPIView):
-    model = models.Dog
-    permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = serializers.DogSerializer
-
-    def get_object(self):
-        pk = int(self.kwargs.get('pk'))
-
-        if not pk:
+        if not temp_obj:
             raise NotFound
-
-        temp_obj = models.UserDog.objects.filter(Q(user=self.request.user)&Q(status='d')&Q(dog__pk__gt=self.kwargs.get('pk'))).select_related('dog').first()
-
-        obj = temp_obj.dog
-
-        return obj
-
-
-class RetrieveDogNextUndecidedView(RetrieveAPIView):
-    model = models.Dog
-    permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = serializers.DogSerializer
-
-    def get_object(self):
-        pk = int(self.kwargs.get('pk'))
-
-        if not pk:
-            raise NotFound
-
-        temp_obj = models.UserDog.objects.filter(Q(user=self.request.user)&Q(status='')&Q(dog__pk__gt=self.kwargs.get('pk'))).select_related('dog').first()
 
         obj = temp_obj.dog
 
