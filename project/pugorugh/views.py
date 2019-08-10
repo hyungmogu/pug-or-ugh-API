@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import permissions, viewsets, status
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView
 
 from . import serializers
 from . import models
@@ -36,6 +36,7 @@ class RetrieveDogView(RetrieveAPIView):
 
 class RetrieveUpdateDogLikeView(UpdateAPIView):
     model = models.UserDog
+    queryset = models.UserDog.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.UserDogSerializer
 
@@ -151,19 +152,19 @@ class RetrieveUpdateDogUndecidedView(UpdateAPIView):
 
 
 class RetrieveDogNextLikeView(RetrieveAPIView):
-    model = models.UserDog
+    model = models.Dog
     permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = serializers.UserDogSerializer
+    serializer_class = serializers.DogSerializer
 
-    def retrieve(self, request, *args, **kwargs):
-        obj = self.model.objects.filter(Q(user=request.user)&Q(status='l')&Q(dog__pk__gt=self.kwargs.get('pk'))).first()
-
-        if not obj:
+    def get_object(self):
+        pk = int(self.kwargs.get('pk'))
+        if not pk:
             raise NotFound
 
-        serializer = self.serializer_class(obj)
+        pk_next = 1 if pk == -1 else pk + 1
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        obj = self.model.objects.get(id=pk_next)
+        return obj
 
 class RetrieveDogNextDislikeView(RetrieveAPIView):
     model = models.UserDog
