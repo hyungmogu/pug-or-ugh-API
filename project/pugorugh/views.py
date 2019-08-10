@@ -99,18 +99,32 @@ class RetrieveNextDogView(RetrieveAPIView):
         temp_user_perf_gender = [x for x in user_perf.gender.split(',')]
         user_perf_gender = r'({0})'.format('|'.join(temp_user_perf_gender))
 
-        temp_obj = models.UserDog.objects \
+        result = models.UserDog.objects \
                     .filter(
                         Q(user=self.request.user)&
                         Q(status=status)&
                         Q(dog__gender__iregex=user_perf_gender)&
                         Q(dog__size__iregex=user_perf_size)&
-                        Q(dog__pk__gt=self.kwargs.get('pk'))) \
-                    .select_related('dog').first()
+                        Q(dog__pk__gt=self.kwargs.get('pk'))
+                    )
 
-        if not temp_obj:
+        if 'b' not in user_perf.age:
+            result = result.exclude(Q(dog__age__lt=11))
+
+        if 'y' not in user_perf.age:
+            result = result.exclude(Q(dog__age__gte=11)&Q(dog__age__lt=20))
+
+        if 'a' not in user_perf.age:
+            result = result.exclude(Q(dog__age__gte=20)&Q(dog__age__lt=60))
+
+        if 's' not in user_perf.age:
+            result = result.exclude(Q(dog__age__gte=60))
+
+        obj = result.select_related('dog').first()
+
+        if not obj:
             raise NotFound
 
-        obj = temp_obj.dog
+        obj = obj.dog
 
         return obj
