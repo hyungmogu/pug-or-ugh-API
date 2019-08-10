@@ -1040,6 +1040,20 @@ class NextGETTestCase(TestCase):
         self.user1 = models.User.objects.get(username='test')
         self.user2 = models.User.objects.get(username='world')
 
+        models.UserPerf.objects.create(
+            user=self.user1,
+            age="b,a,y,s",
+            gender="m",
+            size="s,m,l,xl"
+        )
+
+        models.UserPerf.objects.create(
+            user=self.user2,
+            age="b,a,y,s",
+            gender="m",
+            size="s"
+        )
+
         self.dog1 = models.Dog.objects.create(
             name='Francesca',
             image_filename='1.jpg',
@@ -1050,6 +1064,15 @@ class NextGETTestCase(TestCase):
         )
 
         self.dog2 = models.Dog.objects.create(
+            name='Captain Jack',
+            image_filename='12.jpg',
+            breed='Pug Mix',
+            age=14,
+            gender='f',
+            size='s'
+        )
+
+        self.dog3 = models.Dog.objects.create(
             name='Hank',
             image_filename='2.jpg',
             breed='French Bulldog',
@@ -1077,13 +1100,19 @@ class TestNextDogLiked(NextGETTestCase):
 
         models.UserDog.objects.create(
             user=self.user1,
-            dog=self.dog2,
+            dog=self.dog3,
             status='d'
         )
 
         models.UserDog.objects.create(
             user=self.user1,
             dog=self.dog2,
+            status='l'
+        )
+
+        models.UserDog.objects.create(
+            user=self.user1,
+            dog=self.dog3,
             status='l'
         )
 
@@ -1170,13 +1199,19 @@ class TestNextDogDisliked(NextGETTestCase):
 
         models.UserDog.objects.create(
             user=self.user1,
-            dog=self.dog2,
+            dog=self.dog3,
             status='l'
         )
 
         models.UserDog.objects.create(
             user=self.user1,
             dog=self.dog2,
+            status='d'
+        )
+
+        models.UserDog.objects.create(
+            user=self.user1,
+            dog=self.dog3,
             status='d'
         )
 
@@ -1262,13 +1297,19 @@ class TestNextDogUndecided(NextGETTestCase):
 
         models.UserDog.objects.create(
             user=self.user1,
-            dog=self.dog2,
+            dog=self.dog3,
             status='l'
         )
 
         models.UserDog.objects.create(
             user=self.user1,
             dog=self.dog2,
+            status=''
+        )
+
+        models.UserDog.objects.create(
+            user=self.user1,
+            dog=self.dog3,
             status=''
         )
 
