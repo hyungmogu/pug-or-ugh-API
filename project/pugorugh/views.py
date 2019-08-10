@@ -158,12 +158,14 @@ class RetrieveDogNextLikeView(RetrieveAPIView):
 
     def get_object(self):
         pk = int(self.kwargs.get('pk'))
+
         if not pk:
             raise NotFound
 
-        pk_next = 1 if pk == -1 else pk + 1
+        temp_obj = models.UserDog.objects.filter(Q(user=self.request.user)&Q(status='l')&Q(dog__pk__gt=self.kwargs.get('pk'))).select_related('dog').first()
 
-        obj = self.model.objects.get(id=pk_next)
+        obj = temp_obj.dog
+
         return obj
 
 class RetrieveDogNextDislikeView(RetrieveAPIView):
@@ -180,8 +182,6 @@ class RetrieveDogNextDislikeView(RetrieveAPIView):
         temp_obj = models.UserDog.objects.filter(Q(user=self.request.user)&Q(status='d')&Q(dog__pk__gt=self.kwargs.get('pk'))).select_related('dog').first()
 
         obj = temp_obj.dog
-
-        print(obj)
 
         return obj
 
