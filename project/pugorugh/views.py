@@ -91,8 +91,21 @@ class RetrieveNextDogView(RetrieveAPIView):
         if not pk:
             raise NotFound
 
+        user_perf = models.UserPerf.objects.get(user=self.request.user)
+
+        temp_user_perf_size = [x for x in user_perf.size.split(',')]
+        user_perf_size = r'({0})'.format('|'.join(temp_user_perf_size))
+
+        temp_user_perf_gender = [x for x in user_perf.gender.split(',')]
+        user_perf_gender = r'({0})'.format('|'.join(temp_user_perf_gender))
+
         temp_obj = models.UserDog.objects \
-                    .filter(Q(user=self.request.user)&Q(status=status)&Q(dog__pk__gt=self.kwargs.get('pk'))) \
+                    .filter(
+                        Q(user=self.request.user)&
+                        Q(status=status)&
+                        Q(dog__gender__iregex=user_perf_gender)&
+                        Q(dog__size__iregex=user_perf_size)&
+                        Q(dog__pk__gt=self.kwargs.get('pk'))) \
                     .select_related('dog').first()
 
         if not temp_obj:
