@@ -61,32 +61,6 @@ class UserModelTestCase(TestCase):
 
 """
 UserPerf Model
-    given that the following user perfs are added to database, one for each user
-
-    {
-        "user": USER_1 <-- has username test1,
-        "age": "b",
-        "gender": "m",
-        size: "s"
-    }
-
-        {
-        "user": USER_2 <-- has username test2,
-        "age": "a",
-        "gender": "m",
-        size: "l"
-    }
-
-    [x]: return count of 2 on user_perf models
-    [x]: if user perf of pk=1 is retrieved, it should have username of test1
-    [x]: if user perf of pk=1 is retrieved, it should have age of b
-    [x]: if user perf of pk=1 is retrieved, it should have gender of m
-    [x]: if user perf of pk=1 is retrieved it should have size of s
-
-    [x]: if user perf of pk=2 is retrieved, it should have username of test2
-    [x]: if user perf of pk=2 is retrieved, it should have age of a
-    [x]: if user perf of pk=2 is retrieved, it should have gender of m
-    [x]: if user perf of pk=2 is retrieved, it shuld have size of l
 """
 class UserPerfTestCase(TestCase):
     def setUp(self):
@@ -193,39 +167,6 @@ class UserPerfTestCase(TestCase):
 
 """
 Dog Model
-    given that the following dogs are added to database
-
-    {
-        "name": "Francesca",
-        "image_filename": "1.jpg",
-        "breed": "Labrador",
-        "age": 72,
-        "gender": "f",
-        "size": "l"
-    },
-    {
-        "name": "Hank",
-        "image_filename": "2.jpg",
-        "breed": "French Bulldog",
-        "age": 14,
-        "gender": "m",
-        "size": "s"
-    }
-
-    [x]: When all are retrieved, it should return the count of 2
-    [x]: if a dog with pk=1 is retrieved, it should have name of Francesca
-    [x]: if a dog with pk=1 is retrieved, it should have image_filename of "1.jpg"
-    [x]: if a dog with pk=1 is retrieved, it should have breed of Labrador
-    [x]: if a dog with pk=1 is retrieved it should have age of 72
-    [x]: if a dog with pk=1 is retrieved it should have gender of f
-    [x]: if a dog with pk=1 is retrieved it should have size of l
-
-    [x]: if a dog with pk=2 is retrieved, it should have name of Hank
-    [x]: if a dog with pk=2 is retrieved, it should have image_filename of "2.jpg"
-    [x]: if a dog with pk=2 is retrieved, it should have breed of French Bulldog
-    [x]: if a dog with pk=2 is retrieved it should have age of 14
-    [x]: if a dog with pk=2 is retrieved it should have gender of m
-    [x]: if a dog with pk=2 is retrieved it should have size of s
 """
 
 class DogTestCase(TestCase):
@@ -352,73 +293,7 @@ class DogTestCase(TestCase):
 
 """
 UserDog Model
-
-Given that the following sets of data are added to database
-
-    dog1 = {
-        "name": "Francesca",
-        "image_filename": "1.jpg",
-        "breed": "Labrador",
-        "age": 72,
-        "gender": "f",
-        "size": "l"
-    }
-
-    dog2 = {
-        "name": "Hank",
-        "image_filename": "2.jpg",
-        "breed": "French Bulldog",
-        "age": 14,
-        "gender": "m",
-        "size": "s"
-    }
-
-    user1 = {
-        username='hello',
-        password='hello'
-    }
-
-    user2 = {
-        username='world',
-        password='world'
-    }
-
-    user_dog1 = {
-        user: user1,
-        dog: dog1,
-        status: 'l'
-    }
-
-    user_dog2 = {
-        user: user1,
-        dog: dog2,
-        status 'd'
-    }
-
-    user_dog3 = {
-        user: user2,
-        dog: dog1,
-        status: 'l'
-    }
-
-
-[x]: When all are retrieved, it should return the count of 3
-[x]: if user_dog with pk=1 is retrieved, it should return user with username hello
-[x]: if user_dog with pk=1 is retrieved, it should return dog with name Francesco
-[x]: if user_dog with pk=1 is retrieved, it should return status with l as its value
-
-[x]: if user_dog with pk=2 is retrieved, it should return user with username of hello
-[x]: if user_dog with pk=2 is retrieved, it should return dog with name of Hank
-[x]: if user_dog with pk=2 is retrieved, it should return status with d as its value
-
-[x]: if user_dog with pk=3 is retrieved, it should return user with username of world
-[x]: if user_dog with pk=3 is retrieved, it should return dog with name Francesco
-[x]: if user_dog with pk=3 is retrieved, it should return status with l as its value
-
 """
-
-
-
 class DogTestCase(TestCase):
     def setUp(self):
         self.dog1 = models.Dog.objects.create(
@@ -552,30 +427,7 @@ class DogTestCase(TestCase):
 # -----------
 
 """
-"/api/user/preferences"
-
-GET Request
-[x]: When retrieved, should return status code of 200 if authenticated
-[x]: When retrieved, should return status code of 401 if not authenticated
-[x]: When retrieved, should return object without user field
-[x]: When retrieved the first time, it should return fields with empty values
-    i.e.
-
-        {
-            "age": "",
-            "gender": "",
-            "size": ""
-        }
-
-[x]: when the following values have been added to user preferences
-    {
-        "user": [1], <-- referencing the account for testing
-        "age": "b,y",
-        "gender": "m,f",
-        "size": "s,m,l"
-    }
-
-    the same except user is returned
+"/api/user/preferences" (GET)
 """
 class PreferenceTest(TestCase):
     def setUp(self):
@@ -680,14 +532,7 @@ class TestPreferencesGETRequest(PreferenceTest):
 
 
 """
-"/api/user/preferences"
-
-PUT Request
-[x]: When successful, should return the status code of 200
-[x]: When accessed by non-authenticated user, should return status code of 401
-[x]: When successful, should create and store the userPerf information, if userPerf of a user didn't exist
-[x]: When successful, database should contain the matching information, if userPref of a user already exists
-[x]: When a field is empty, then should return status code 400
+"/api/user/preferences" (PUT)
 """
 
 class TestPreferencesPUTRequest(PreferenceTest):
@@ -887,35 +732,9 @@ class TestPreferencesPUTRequest(PreferenceTest):
 
 
 """
-/api/dogs/{id}/liked
-
-PUT REQUEST
-Given the following data
-
-dog = {
-        "name": "Francesca",
-        "image_filename": "1.jpg",
-        "breed": "Labrador",
-        "age": 72,
-        "gender": "f",
-        "size": "l"
-    }
-
-user1 = {
-    username='test',
-    password='12345'
-}
-
-
-[x]: When successful should return the status code of 200
-[x]: When accessed by non-authenticated user, it should return status code 401
-[x]: When successful, should create and store information, if the information didn't exist
-[x]: When successful, database should contain the matching information, if the entry of id already exists
-[x]: When field is empty, should return status code 400
+/api/dogs/{id}/liked (PUT)
 """
-
-class TestDogLikedPUTRequest(TestCase):
-
+class StatusTypePUTTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.resp_register = self.client.post(
@@ -936,6 +755,7 @@ class TestDogLikedPUTRequest(TestCase):
             size="l"
         )
 
+class TestDogLikedPUTRequest(StatusTypePUTTestCase):
     def test_return_status_code_200_if_okay(self):
         expected = 200
 
@@ -1019,55 +839,10 @@ class TestDogLikedPUTRequest(TestCase):
 
 
 """
-/api/dogs/{id}/disliked
-
-PUT REQUEST
-Given the following data
-
-dog = {
-        "name": "Francesca",
-        "image_filename": "1.jpg",
-        "breed": "Labrador",
-        "age": 72,
-        "gender": "f",
-        "size": "l"
-    }
-
-user1 = {
-    username='test',
-    password='12345'
-}
-
-
-[x]: When successful should return the status code of 200
-[x]: When accessed by non-authenticated user, it should return status code 401
-[x]: When successful, should create and store information, if the information didn't exist
-[x]: When successful, database should contain the matching information, if the entry of id already exists
-[x]: When field is empty, should return status code 400
+/api/dogs/{id}/disliked (PUT)
 """
 
-class TestDogDislikedPUTRequest(TestCase):
-
-    def setUp(self):
-        self.client = APIClient()
-        self.resp_register = self.client.post(
-            '/api/user/',
-            {
-                'username':'test',
-                'password':'12345'
-            },
-            format='json'
-        )
-        self.user = User.objects.get(username='test')
-        self.dog = models.Dog.objects.create(
-            name="Francesca",
-            image_filename="1.jpg",
-            breed="Labrador",
-            age=72,
-            gender="f",
-            size="l"
-        )
-
+class TestDogDislikedPUTRequest(StatusTypePUTTestCase):
     def test_return_status_code_200_if_okay(self):
         expected = 200
 
@@ -1150,55 +925,10 @@ class TestDogDislikedPUTRequest(TestCase):
 
 
 """
-/api/dogs/{id}/undecided
-
-PUT REQUEST
-Given the following data
-
-dog = {
-        "name": "Francesca",
-        "image_filename": "1.jpg",
-        "breed": "Labrador",
-        "age": 72,
-        "gender": "f",
-        "size": "l"
-    }
-
-user1 = {
-    username='test',
-    password='12345'
-}
-
-
-[x]: When successful should return the status code of 200
-[x]: When accessed by non-authenticated user, it should return status code 401
-[x]: When successful, should create and store information, if the information didn't exist
-[x]: When successful, database should contain the matching information, if the entry of id already exists
-[x]: When field is empty, should return status code 400
+/api/dogs/{id}/undecided (PUT)
 """
 
-class TestDogUndecidedPUTRequest(TestCase):
-
-    def setUp(self):
-        self.client = APIClient()
-        self.resp_register = self.client.post(
-            '/api/user/',
-            {
-                'username':'test',
-                'password':'12345'
-            },
-            format='json'
-        )
-        self.user = User.objects.get(username='test')
-        self.dog = models.Dog.objects.create(
-            name="Francesca",
-            image_filename="1.jpg",
-            breed="Labrador",
-            age=72,
-            gender="f",
-            size="l"
-        )
-
+class TestDogUndecidedPUTRequest(StatusTypePUTTestCase):
     def test_return_status_code_200_if_okay(self):
         expected = 200
 
@@ -1282,78 +1012,10 @@ class TestDogUndecidedPUTRequest(TestCase):
 
 
 """
-/api/dogs/{id}/liked/next/
-
-GET REQUEST
-Given an example endpoint '/api/dog/1/liked/next' with the following UserDog data
-
-[
-    {
-        "id": 1,
-        "user":1,
-        "dog": 1,
-        "status": "l"
-    },
-    {
-        "id": 2,
-        "user": 2,
-        "dog": 1,
-        "status": "l"
-    },
-    {
-        "id": 3,
-        "user": 1,
-        "dog": 2,
-        "status": "d"
-    },
-    {
-        "id": 4,
-        "user": 1,
-        "dog": 2,
-        "status": "l"
-    }
-
-]
-
-user1 = {
-    username='test',
-    password='12345'
-}
-
-user2 = {
-    username='world',
-    password='world'
-}
-
-
-dog1 = {
-    "name": "Francesca",
-    "image_filename": "1.jpg",
-    "breed": "Labrador",
-    "age": 72,
-    "gender": "f",
-    "size": "l"
-}
-
-dog2 = {
-    "name": "Hank",
-    "image_filename": "2.jpg",
-    "breed": "French Bulldog",
-    "age": 14,
-    "gender": "m",
-    "size": "s"
-}
-
-[x]: When not authenticated, return status code of 401
-[x]: When empty, return status code of 404
-[x]: When out of bound, return status code of 404
-[x]: when successful, return status code 200
-[x]: When successful, return item with id of 4
-[x]: When successful, return item with username of 'test'
-[x]: When successful, return item with dog name of 'Hank'
+/api/dogs/{id}/liked/next/ (GET)
 """
 
-class TestNextDogLikedGETRequest(TestCase):
+class NextGETTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
 
@@ -1396,6 +1058,11 @@ class TestNextDogLikedGETRequest(TestCase):
             size='s'
         )
 
+
+class TestNextDogLiked(NextGETTestCase):
+    def setUp(self):
+        super().setUp()
+
         models.UserDog.objects.create(
             user=self.user1,
             dog=self.dog1,
@@ -1419,6 +1086,7 @@ class TestNextDogLikedGETRequest(TestCase):
             dog=self.dog2,
             status='l'
         )
+
 
     def test_return_status_code_401_if_not_authenticated(self):
         expected = 401
@@ -1463,43 +1131,7 @@ class TestNextDogLikedGETRequest(TestCase):
 
         self.assertEqual(expected, result)
 
-    def test_return_user_dog_object_with_id_4_if_successful(self):
-        expected = 4
-
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
-            }
-        )
-
-        token = resp_login.data['token']
-
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        response = self.client.get('/api/dog/1/liked/next/')
-        result = response.data['id']
-
-        self.assertEqual(expected, result)
-
-
-    def test_return_user_dog_object_with_user_name_test_if_successful(self):
-        expected = 'test'
-
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
-            }
-        )
-
-        token = resp_login.data['token']
-
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        response = self.client.get('/api/dog/1/liked/next/')
-        user = models.User.objects.get(pk=response.data['user'])
-        result = user.username
-
-        self.assertEqual(expected, result)
-
-    def test_return_user_dog_object_with_dog_name_hank_if_successful(self):
+    def test_return_user_dog_object_with_name_hank_if_successful(self):
         expected = 'Hank'
 
         resp_login = self.client.post('/api/user/login/', {
@@ -1512,126 +1144,17 @@ class TestNextDogLikedGETRequest(TestCase):
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
         response = self.client.get('/api/dog/1/liked/next/')
-        dog = models.Dog.objects.get(pk=response.data['dog'])
-        result = dog.name
+        result = response.data['name']
 
         self.assertEqual(expected, result)
 
 
 """
-/api/dogs/{id}/disliked/next/
-
-GET REQUEST
-Given an example endpoint '/api/dog/1/disliked/next' with the following UserDog data
-
-[
-    {
-        "id": 1,
-        "user":1,
-        "dog": 1,
-        "status": "d"
-    },
-    {
-        "id": 2,
-        "user": 2,
-        "dog": 1,
-        "status": "d"
-    },
-    {
-        "id": 3,
-        "user": 1,
-        "dog": 2,
-        "status": "l"
-    },
-    {
-        "id": 4,
-        "user": 1,
-        "dog": 2,
-        "status": "d"
-    }
-
-]
-
-user1 = {
-    username='test',
-    password='12345'
-}
-
-user2 = {
-    username='world',
-    password='world'
-}
-
-
-dog1 = {
-    "name": "Francesca",
-    "image_filename": "1.jpg",
-    "breed": "Labrador",
-    "age": 72,
-    "gender": "f",
-    "size": "l"
-}
-
-dog2 = {
-    "name": "Hank",
-    "image_filename": "2.jpg",
-    "breed": "French Bulldog",
-    "age": 14,
-    "gender": "m",
-    "size": "s"
-}
-
-[x]: When not authenticated, return status code of 401
-[x]: When empty, return status code of 404
-[x]: When out of bound, return status code of 404
-[x]: when successful, return status code 200
-[x]: When successful, return item with id of 4
-[x]: When successful, return item with username of 'test'
-[x]: When successful, return item with dog name of 'Hank'
+/api/dogs/{id}/disliked/next/ (GET)
 """
-
-class TestNextDogDislikedGETRequest(TestCase):
+class TestNextDogDisliked(NextGETTestCase):
     def setUp(self):
-        self.client = APIClient()
-
-        self.client.post(
-            '/api/user/',
-            {
-                'username':'test',
-                'password':'12345'
-            },
-            format='json'
-        )
-
-        self.client.post(
-            '/api/user/',
-            {
-                'username':'world',
-                'password':'world'
-            },
-            format='json'
-        )
-
-        self.user1 = models.User.objects.get(username='test')
-        self.user2 = models.User.objects.get(username='world')
-
-        self.dog1 = models.Dog.objects.create(
-            name='Francesca',
-            image_filename='1.jpg',
-            breed='Labrador',
-            age=72,
-            gender='f',
-            size='l'
-        )
-
-        self.dog2 = models.Dog.objects.create(
-            name='Hank',
-            image_filename='2.jpg',
-            breed='French Bulldog',
-            age=14,
-            gender='m',
-            size='s'
-        )
+        super().setUp()
 
         models.UserDog.objects.create(
             user=self.user1,
@@ -1700,42 +1223,6 @@ class TestNextDogDislikedGETRequest(TestCase):
 
         self.assertEqual(expected, result)
 
-    def test_return_user_dog_object_with_id_4_if_successful(self):
-        expected = 4
-
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
-            }
-        )
-
-        token = resp_login.data['token']
-
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        response = self.client.get('/api/dog/1/disliked/next/')
-        result = response.data['id']
-
-        self.assertEqual(expected, result)
-
-
-    def test_return_user_dog_object_with_user_name_test_if_successful(self):
-        expected = 'test'
-
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
-            }
-        )
-
-        token = resp_login.data['token']
-
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        response = self.client.get('/api/dog/1/disliked/next/')
-        user = models.User.objects.get(pk=response.data['user'])
-        result = user.username
-
-        self.assertEqual(expected, result)
-
     def test_return_user_dog_object_with_dog_name_hank_if_successful(self):
         expected = 'Hank'
 
@@ -1749,126 +1236,17 @@ class TestNextDogDislikedGETRequest(TestCase):
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
         response = self.client.get('/api/dog/1/disliked/next/')
-        dog = models.Dog.objects.get(pk=response.data['dog'])
-        result = dog.name
+        result = response.data['name']
 
         self.assertEqual(expected, result)
 
 
 """
-/api/dogs/{id}/undecided/next/
-
-GET REQUEST
-Given an example endpoint '/api/dog/1/undecided/next' with the following UserDog data
-
-[
-    {
-        "id": 1,
-        "user":1,
-        "dog": 1,
-        "status": ""
-    },
-    {
-        "id": 2,
-        "user": 2,
-        "dog": 1,
-        "status": ""
-    },
-    {
-        "id": 3,
-        "user": 1,
-        "dog": 2,
-        "status": "l"
-    },
-    {
-        "id": 4,
-        "user": 1,
-        "dog": 2,
-        "status": ""
-    }
-
-]
-
-user1 = {
-    username='test',
-    password='12345'
-}
-
-user2 = {
-    username='world',
-    password='world'
-}
-
-
-dog1 = {
-    "name": "Francesca",
-    "image_filename": "1.jpg",
-    "breed": "Labrador",
-    "age": 72,
-    "gender": "f",
-    "size": "l"
-}
-
-dog2 = {
-    "name": "Hank",
-    "image_filename": "2.jpg",
-    "breed": "French Bulldog",
-    "age": 14,
-    "gender": "m",
-    "size": "s"
-}
-
-[x]: When not authenticated, return status code of 401
-[x]: When empty, return status code of 404
-[x]: When out of bound, return status code of 404
-[x]: when successful, return status code 200
-[x]: When successful, return item with id of 4
-[x]: When successful, return item with username of 'test'
-[x]: When successful, return item with dog name of 'Hank'
+/api/dogs/{id}/undecided/next/ (GET)
 """
-
-class TestNextDogUndecidedGETRequest(TestCase):
+class TestNextDogUndecided(NextGETTestCase):
     def setUp(self):
-        self.client = APIClient()
-
-        self.client.post(
-            '/api/user/',
-            {
-                'username':'test',
-                'password':'12345'
-            },
-            format='json'
-        )
-
-        self.client.post(
-            '/api/user/',
-            {
-                'username':'world',
-                'password':'world'
-            },
-            format='json'
-        )
-
-        self.user1 = models.User.objects.get(username='test')
-        self.user2 = models.User.objects.get(username='world')
-
-        self.dog1 = models.Dog.objects.create(
-            name='Francesca',
-            image_filename='1.jpg',
-            breed='Labrador',
-            age=72,
-            gender='f',
-            size='l'
-        )
-
-        self.dog2 = models.Dog.objects.create(
-            name='Hank',
-            image_filename='2.jpg',
-            breed='French Bulldog',
-            age=14,
-            gender='m',
-            size='s'
-        )
+        super().setUp()
 
         models.UserDog.objects.create(
             user=self.user1,
@@ -1937,42 +1315,6 @@ class TestNextDogUndecidedGETRequest(TestCase):
 
         self.assertEqual(expected, result)
 
-    def test_return_user_dog_object_with_id_4_if_successful(self):
-        expected = 4
-
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
-            }
-        )
-
-        token = resp_login.data['token']
-
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        response = self.client.get('/api/dog/1/undecided/next/')
-        result = response.data['id']
-
-        self.assertEqual(expected, result)
-
-
-    def test_return_user_dog_object_with_user_name_test_if_successful(self):
-        expected = 'test'
-
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
-            }
-        )
-
-        token = resp_login.data['token']
-
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        response = self.client.get('/api/dog/1/undecided/next/')
-        user = models.User.objects.get(pk=response.data['user'])
-        result = user.username
-
-        self.assertEqual(expected, result)
-
     def test_return_user_dog_object_with_dog_name_hank_if_successful(self):
         expected = 'Hank'
 
@@ -1986,8 +1328,7 @@ class TestNextDogUndecidedGETRequest(TestCase):
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
         response = self.client.get('/api/dog/1/undecided/next/')
-        dog = models.Dog.objects.get(pk=response.data['dog'])
-        result = dog.name
+        result = response.data['name']
 
         self.assertEqual(expected, result)
 
