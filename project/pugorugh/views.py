@@ -187,16 +187,18 @@ class RetrieveDogNextDislikeView(RetrieveAPIView):
 
 
 class RetrieveDogNextUndecidedView(RetrieveAPIView):
-    model = models.UserDog
+    model = models.Dog
     permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = serializers.UserDogSerializer
+    serializer_class = serializers.DogSerializer
 
-    def retrieve(self, request, *args, **kwargs):
-        obj = self.model.objects.filter(Q(user=request.user)&Q(status='')&Q(dog__pk__gt=self.kwargs.get('pk'))).first()
+    def get_object(self):
+        pk = int(self.kwargs.get('pk'))
 
-        if not obj:
+        if not pk:
             raise NotFound
 
-        serializer = self.serializer_class(obj)
+        temp_obj = models.UserDog.objects.filter(Q(user=self.request.user)&Q(status='')&Q(dog__pk__gt=self.kwargs.get('pk'))).select_related('dog').first()
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        obj = temp_obj.dog
+
+        return obj
