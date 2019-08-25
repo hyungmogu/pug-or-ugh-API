@@ -15,6 +15,14 @@ class UserRegisterView(CreateAPIView):
     model = get_user_model()
     serializer_class = serializers.UserSerializer
 
+    def perform_create(self, serializer):
+        user = serializer.save()
+
+        dogs = models.Dog.objects.all()
+        models.UserDog.objects.bulk_create([
+            models.UserDog(user=user, dog=dog) for dog in dogs])
+
+
 class UserPerfView(RetrieveUpdateAPIView):
     model = models.UserPerf
     permission_classes = (permissions.IsAuthenticated,)
@@ -27,6 +35,7 @@ class UserPerfView(RetrieveUpdateAPIView):
             obj = self.model.objects.create(user=self.request.user)
 
         return obj
+
 
 class UpdateDogView(UpdateAPIView):
     model = models.UserDog
