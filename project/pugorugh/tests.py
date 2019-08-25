@@ -111,7 +111,6 @@ class UserPerfTestCase(TestCase):
 
         self.assertEqual(expected, result)
 
-
     def test_return_user_perf_pk_1_with_gender_m(self):
         expected = 'm'
 
@@ -119,7 +118,6 @@ class UserPerfTestCase(TestCase):
         result = user_perf.gender
 
         self.assertEqual(expected, result)
-
 
     def test_return_user_perf_pk_1_with_size_s(self):
         expected = 's'
@@ -145,7 +143,6 @@ class UserPerfTestCase(TestCase):
 
         self.assertEqual(expected, result)
 
-
     def test_return_user_perf_pk_2_with_gender_m(self):
         expected = 'm'
 
@@ -153,7 +150,6 @@ class UserPerfTestCase(TestCase):
         result = user_perf.gender
 
         self.assertEqual(expected, result)
-
 
     def test_return_user_perf_pk_2_with_size_l(self):
         expected = 'l'
@@ -164,11 +160,9 @@ class UserPerfTestCase(TestCase):
         self.assertEqual(expected, result)
 
 
-
 """
 Dog Model
 """
-
 class DogTestCase(TestCase):
     def setUp(self):
         self.dog1 = models.Dog.objects.create(
@@ -195,7 +189,6 @@ class DogTestCase(TestCase):
         result = models.Dog.objects.all().count()
 
         self.assertEqual(expected, result)
-
 
     def test_return_dog_pk_1_with_name_francesca(self):
         expected = 'Francesca'
@@ -291,6 +284,7 @@ class DogTestCase(TestCase):
 
         self.assertEqual(expected, result)
 
+
 """
 UserDog Model
 """
@@ -323,7 +317,6 @@ class DogTestCase(TestCase):
             username='world',
             password='world'
         )
-
 
         self.user_dog1 = models.UserDog.objects.create(
             user=self.user1,
@@ -451,10 +444,10 @@ class TestUserRegisterationPOSTRequest(TestCase):
         )
 
         self.resp_register = self.client.post(
-            '/api/user/',
+            reverse('register-user'),
             {
-                'username':'test',
-                'password':'12345'
+                'username': 'test',
+                'password': '12345'
             },
             format='json'
         )
@@ -482,8 +475,6 @@ class TestUserRegisterationPOSTRequest(TestCase):
         self.assertEqual(expected, result)
 
 
-
-
 """
 /api/user/preferences" (GET)
 """
@@ -491,37 +482,37 @@ class PreferenceTest(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.resp_register = self.client.post(
-            '/api/user/',
+            reverse('register-user'),
             {
-                'username':'test',
-                'password':'12345'
+                'username': 'test',
+                'password': '12345'
             },
             format='json'
         )
+
 
 class TestPreferencesGETRequest(PreferenceTest):
     def test_return_status_code_200_if_authenticated(self):
         expected = 200
 
         # authenticate as user test
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        resp_preference = self.client.get('/api/user/preferences/')
+        resp_preference = self.client.get(reverse('perf-user'))
         result = resp_preference.status_code
 
         self.assertEqual(expected, result)
 
-
     def test_return_status_code_401_if_not_authenticated(self):
         expected = 401
 
-        resp_preference = self.client.get('/api/user/preferences/')
+        resp_preference = self.client.get(reverse('perf-user'))
         result = resp_preference.status_code
 
         self.assertEqual(expected, result)
@@ -531,15 +522,15 @@ class TestPreferencesGETRequest(PreferenceTest):
         expected_gender = ""
         expected_size = ""
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        resp_preference = self.client.get('/api/user/preferences/')
+        resp_preference = self.client.get(reverse('perf-user'))
         result_age = resp_preference.data['age']
         result_gender = resp_preference.data['gender']
         result_size = resp_preference.data['size']
@@ -549,15 +540,15 @@ class TestPreferencesGETRequest(PreferenceTest):
         self.assertEqual(expected_size, result_size)
 
     def test_return_without_user_field_when_retrieved(self):
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        resp_preference = self.client.get('/api/user/preferences/')
+        resp_preference = self.client.get(reverse('perf-user'))
 
         with self.assertRaises(KeyError):
             resp_preference.data['user']
@@ -570,16 +561,16 @@ class TestPreferencesGETRequest(PreferenceTest):
         user = User.objects.get(pk=1)
         models.UserPerf.objects.create(user=user, age='b,y', gender='m,f', size='s,m,l')
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        resp_preference = self.client.get('/api/user/preferences/')
+        resp_preference = self.client.get(reverse('perf-user'))
         result_age = resp_preference.data['age']
         result_gender = resp_preference.data['gender']
         result_size = resp_preference.data['size']
@@ -590,23 +581,22 @@ class TestPreferencesGETRequest(PreferenceTest):
 
 
 """
-"/api/user/preferences" (PUT)
+/api/user/preferences" (PUT)
 """
-
 class TestPreferencesPUTRequest(PreferenceTest):
 
     def test_return_status_code_200_if_okay(self):
         expected = 200
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        resp_preference = self.client.put('/api/user/preferences/', {
+        resp_preference = self.client.put(reverse('perf-user'), {
             "age": "b,y",
             "gender": "m,f",
             "size": "s,m,l"
@@ -619,7 +609,7 @@ class TestPreferencesPUTRequest(PreferenceTest):
     def test_return_status_401_if_accessed_by_unauthenticated_user(self):
         expected = 401
 
-        resp_preference = self.client.put('/api/user/preferences/', {
+        resp_preference = self.client.put(reverse('perf-user'), {
             "age": "b,y",
             "gender": "m,f",
             "size": "s,m,l"
@@ -632,21 +622,21 @@ class TestPreferencesPUTRequest(PreferenceTest):
     def test_return_status_code_400_if_age_is_empty(self):
         expected = 400
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        resp_preference1 = self.client.put('/api/user/preferences/', {
+        resp_preference1 = self.client.put(reverse('perf-user'), {
             "age": "",
             "gender": "m,f",
             "size": "s,m,l"
         })
 
-        resp_preference2 = self.client.put('/api/user/preferences/', {
+        resp_preference2 = self.client.put(reverse('perf-user'), {
             "gender": "m,f",
             "size": "s,m,l"
         })
@@ -660,21 +650,21 @@ class TestPreferencesPUTRequest(PreferenceTest):
     def test_return_status_code_400_if_gender_is_empty(self):
         expected = 400
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        resp_preference1 = self.client.put('/api/user/preferences/', {
+        resp_preference1 = self.client.put(reverse('perf-user'), {
             "age": "b,y",
             "gender": "",
             "size": "s,m,l"
         })
 
-        resp_preference2 = self.client.put('/api/user/preferences/', {
+        resp_preference2 = self.client.put(reverse('perf-user'), {
             "age": "b,y",
             "size": "s,m,l"
         })
@@ -685,25 +675,24 @@ class TestPreferencesPUTRequest(PreferenceTest):
         self.assertEqual(expected, result1)
         self.assertEqual(expected, result2)
 
-
     def test_return_status_code_400_if_size_is_empty(self):
         expected = 400
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        resp_preference1 = self.client.put('/api/user/preferences/', {
+        resp_preference1 = self.client.put(reverse('perf-user'), {
             "age": "b,y",
             "gender": "m,f",
             "size": ""
         })
 
-        resp_preference2 = self.client.put('/api/user/preferences/', {
+        resp_preference2 = self.client.put(reverse('perf-user'), {
             "age": "b,y",
             "gender": "m,f"
         })
@@ -720,15 +709,15 @@ class TestPreferencesPUTRequest(PreferenceTest):
         expected_gender = "m,f"
         expected_size = "s,m,l"
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        self.client.put('/api/user/preferences/', {
+        self.client.put(reverse('perf-user'), {
             "age": "b,y",
             "gender": "m,f",
             "size": "s,m,l"
@@ -753,9 +742,9 @@ class TestPreferencesPUTRequest(PreferenceTest):
         expected_gender = "m,f"
         expected_size = "s,m,l"
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
         token = resp_login.data['token']
@@ -769,7 +758,7 @@ class TestPreferencesPUTRequest(PreferenceTest):
         )
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        self.client.put('/api/user/preferences/', {
+        self.client.put(reverse('perf-user'), {
             "age": "b,y",
             "gender": "m,f",
             "size": "s,m,l"
@@ -796,10 +785,10 @@ class StatusTypePUTTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.resp_register = self.client.post(
-            '/api/user/',
+            reverse('register-user'),
             {
-                'username':'test',
-                'password':'12345'
+                'username': 'test',
+                'password': '12345'
             },
             format='json'
         )
@@ -813,19 +802,23 @@ class StatusTypePUTTestCase(TestCase):
             size="l"
         )
 
+
 class TestDogLikedPUTRequest(StatusTypePUTTestCase):
     def test_return_status_code_200_if_okay(self):
         expected = 200
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        resp_like = self.client.put('/api/dog/1/liked/')
+        resp_like = self.client.put(reverse('dog', kwargs={
+            'type': 'liked',
+            'pk': '1'
+        }))
 
         result = resp_like.status_code
 
@@ -834,7 +827,10 @@ class TestDogLikedPUTRequest(StatusTypePUTTestCase):
     def test_return_status_401_if_accessed_by_unauthenticated_user(self):
         expected = 401
 
-        resp_liked = self.client.put('/api/dog/1/liked/')
+        resp_liked = self.client.put(reverse('dog', kwargs={
+            'type': 'liked',
+            'pk': '1'
+        }))
 
         result = resp_liked.status_code
 
@@ -844,16 +840,19 @@ class TestDogLikedPUTRequest(StatusTypePUTTestCase):
         expected_db_size = 1
         expected_status = "l"
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        self.client.put('/api/dog/1/liked/')
+        self.client.put(reverse('dog', kwargs={
+            'type': 'liked',
+            'pk': '1'
+        }))
 
         user_dog = models.UserDog.objects.get(pk=1)
 
@@ -868,9 +867,9 @@ class TestDogLikedPUTRequest(StatusTypePUTTestCase):
         expected_db_size = 1
         expected_status = 'l'
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
@@ -883,36 +882,40 @@ class TestDogLikedPUTRequest(StatusTypePUTTestCase):
             status='d'
         )
 
-        self.client.put('/api/dog/1/liked/')
+        self.client.put(reverse('dog', kwargs={
+            'type': 'liked',
+            'pk': '1'
+        }))
 
         user_dog = models.UserDog.objects.get(pk=1)
 
         result_db_size = models.UserDog.objects.all().count()
 
-        result_status =  user_dog.status
+        result_status = user_dog.status
 
         self.assertEqual(expected_db_size, result_db_size)
         self.assertEqual(expected_status, result_status)
 
 
-
 """
 /api/dogs/{id}/disliked (PUT)
 """
-
 class TestDogDislikedPUTRequest(StatusTypePUTTestCase):
     def test_return_status_code_200_if_okay(self):
         expected = 200
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        resp_like = self.client.put('/api/dog/1/disliked/')
+        resp_like = self.client.put(reverse('dog', kwargs={
+            'type': 'disliked',
+            'pk': '1'
+        }))
 
         result = resp_like.status_code
 
@@ -921,7 +924,10 @@ class TestDogDislikedPUTRequest(StatusTypePUTTestCase):
     def test_return_status_401_if_accessed_by_unauthenticated_user(self):
         expected = 401
 
-        resp_liked = self.client.put('/api/dog/1/disliked/')
+        resp_liked = self.client.put(reverse('dog', kwargs={
+            'type': 'disliked',
+            'pk': '1'
+        }))
 
         result = resp_liked.status_code
 
@@ -931,16 +937,19 @@ class TestDogDislikedPUTRequest(StatusTypePUTTestCase):
         expected_db_size = 1
         expected_status = 'd'
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        self.client.put('/api/dog/1/disliked/')
+        self.client.put(reverse('dog', kwargs={
+            'type': 'disliked',
+            'pk': '1'
+        }))
 
         user_dog = models.UserDog.objects.get(pk=1)
 
@@ -955,9 +964,9 @@ class TestDogDislikedPUTRequest(StatusTypePUTTestCase):
         expected_db_size = 1
         expected_status = 'd'
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
@@ -970,13 +979,16 @@ class TestDogDislikedPUTRequest(StatusTypePUTTestCase):
             status='l'
         )
 
-        self.client.put('/api/dog/1/disliked/')
+        self.client.put(reverse('dog', kwargs={
+            'type': 'disliked',
+            'pk': '1'
+        }))
 
         user_dog = models.UserDog.objects.get(pk=1)
 
         result_db_size = models.UserDog.objects.all().count()
 
-        result_status =  user_dog.status
+        result_status = user_dog.status
 
         self.assertEqual(expected_db_size, result_db_size)
         self.assertEqual(expected_status, result_status)
@@ -985,20 +997,22 @@ class TestDogDislikedPUTRequest(StatusTypePUTTestCase):
 """
 /api/dogs/{id}/undecided (PUT)
 """
-
 class TestDogUndecidedPUTRequest(StatusTypePUTTestCase):
     def test_return_status_code_200_if_okay(self):
         expected = 200
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        resp_undecided = self.client.put('/api/dog/1/undecided/')
+        resp_undecided = self.client.put(reverse('dog', kwargs={
+            'type': 'undecided',
+            'pk': '1'
+        }))
 
         result = resp_undecided.status_code
 
@@ -1007,7 +1021,10 @@ class TestDogUndecidedPUTRequest(StatusTypePUTTestCase):
     def test_return_status_401_if_accessed_by_unauthenticated_user(self):
         expected = 401
 
-        resp_undecided = self.client.put('/api/dog/1/undecided/')
+        resp_undecided = self.client.put(reverse('dog', kwargs={
+            'type': 'undecided',
+            'pk': '1'
+        }))
 
         result = resp_undecided.status_code
 
@@ -1017,16 +1034,19 @@ class TestDogUndecidedPUTRequest(StatusTypePUTTestCase):
         expected_db_size = 1
         expected_status = ''
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        self.client.put('/api/dog/1/undecided/')
+        self.client.put(reverse('dog', kwargs={
+            'type': 'undecided',
+            'pk': '1'
+        }))
 
         user_dog = models.UserDog.objects.get(pk=1)
 
@@ -1041,9 +1061,9 @@ class TestDogUndecidedPUTRequest(StatusTypePUTTestCase):
         expected_db_size = 1
         expected_status = ''
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
@@ -1056,38 +1076,39 @@ class TestDogUndecidedPUTRequest(StatusTypePUTTestCase):
             status='l'
         )
 
-        self.client.put('/api/dog/1/undecided/')
+        self.client.put(reverse('dog', kwargs={
+            'type': 'undecided',
+            'pk': '1'
+        }))
 
         user_dog = models.UserDog.objects.get(pk=1)
 
         result_db_size = models.UserDog.objects.all().count()
 
-        result_status =  user_dog.status
+        result_status = user_dog.status
 
         self.assertEqual(expected_db_size, result_db_size)
         self.assertEqual(expected_status, result_status)
 
 
-
 """
 /api/dogs/{id}/liked/next/ (GET)
 """
-
 class NextGETTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
 
         self.client.post(
-            '/api/user/',
+            reverse('register-user'),
             {
-                'username':'test',
-                'password':'12345'
+                'username': 'test',
+                'password': '12345'
             },
             format='json'
         )
 
         self.client.post(
-            '/api/user/',
+            reverse('register-user'),
             {
                 'username':'world',
                 'password':'world'
@@ -1174,11 +1195,13 @@ class TestNextDogLiked(NextGETTestCase):
             status='l'
         )
 
-
     def test_return_status_code_401_if_not_authenticated(self):
         expected = 401
 
-        response = self.client.get('/api/dog/1/liked/next/')
+        response = self.client.get(reverse('dog-next', kwargs={
+            'type': 'liked',
+            'pk': '1'
+        }))
         result = response.status_code
 
         self.assertEqual(expected, result)
@@ -1186,9 +1209,9 @@ class TestNextDogLiked(NextGETTestCase):
     def test_return_status_code_404_if_empty_or_out_of_bound(self):
         expected = 404
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
@@ -1196,7 +1219,10 @@ class TestNextDogLiked(NextGETTestCase):
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
 
-        response = self.client.get('/api/dog/10/liked/next/')
+        response = self.client.get(reverse('dog-next', kwargs={
+            'type': 'liked',
+            'pk': '10'
+        }))
         result = response.status_code
 
         self.assertEqual(expected, result)
@@ -1204,16 +1230,19 @@ class TestNextDogLiked(NextGETTestCase):
     def test_return_status_code_200_if_successful(self):
         expected = 200
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        response = self.client.get('/api/dog/1/liked/next/')
+        response = self.client.get(reverse('dog-next', kwargs={
+            'type': 'liked',
+            'pk': '1'
+        }))
         result = response.status_code
 
         self.assertEqual(expected, result)
@@ -1221,16 +1250,19 @@ class TestNextDogLiked(NextGETTestCase):
     def test_return_user_dog_object_with_name_hank_if_successful(self):
         expected = 'Hank'
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        response = self.client.get('/api/dog/1/liked/next/')
+        response = self.client.get(reverse('dog-next', kwargs={
+            'type': 'liked',
+            'pk': '1'
+        }))
         result = response.data['name']
 
         self.assertEqual(expected, result)
@@ -1276,7 +1308,10 @@ class TestNextDogDisliked(NextGETTestCase):
     def test_return_status_code_401_if_not_authenticated(self):
         expected = 401
 
-        response = self.client.get('/api/dog/1/disliked/next/')
+        response = self.client.get(reverse('dog-next', kwargs={
+            'type': 'disliked',
+            'pk': '1'
+        }))
         result = response.status_code
 
         self.assertEqual(expected, result)
@@ -1284,9 +1319,9 @@ class TestNextDogDisliked(NextGETTestCase):
     def test_return_status_code_404_if_empty_or_out_of_bound(self):
         expected = 404
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
@@ -1294,7 +1329,10 @@ class TestNextDogDisliked(NextGETTestCase):
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
 
-        response = self.client.get('/api/dog/10/disliked/next/')
+        response = self.client.get(reverse('dog-next', kwargs={
+            'type': 'disliked',
+            'pk': '10'
+        }))
         result = response.status_code
 
         self.assertEqual(expected, result)
@@ -1302,16 +1340,19 @@ class TestNextDogDisliked(NextGETTestCase):
     def test_return_status_code_200_if_successful(self):
         expected = 200
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        response = self.client.get('/api/dog/1/disliked/next/')
+        response = self.client.get(reverse('dog-next', kwargs={
+            'type': 'disliked',
+            'pk': '1'
+        }))
         result = response.status_code
 
         self.assertEqual(expected, result)
@@ -1319,16 +1360,20 @@ class TestNextDogDisliked(NextGETTestCase):
     def test_return_user_dog_object_with_dog_name_hank_if_successful(self):
         expected = 'Hank'
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        response = self.client.get('/api/dog/1/disliked/next/')
+        response = self.client.get(reverse('dog-next', kwargs={
+            'type': 'disliked',
+            'pk': '1'
+        }))
+
         result = response.data['name']
 
         self.assertEqual(expected, result)
@@ -1374,7 +1419,10 @@ class TestNextDogUndecided(NextGETTestCase):
     def test_return_status_code_401_if_not_authenticated(self):
         expected = 401
 
-        response = self.client.get('/api/dog/1/undecided/next/')
+        response = self.client.get(reverse('dog-next', kwargs={
+            'type': 'undecided',
+            'pk': '1'
+        }))
         result = response.status_code
 
         self.assertEqual(expected, result)
@@ -1382,9 +1430,9 @@ class TestNextDogUndecided(NextGETTestCase):
     def test_return_status_code_404_if_empty_or_out_of_bound(self):
         expected = 404
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
@@ -1392,7 +1440,10 @@ class TestNextDogUndecided(NextGETTestCase):
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
 
-        response = self.client.get('/api/dog/10/undecided/next/')
+        response = self.client.get(reverse('dog-next', kwargs={
+            'type': 'undecided',
+            'pk': '10'
+        }))
         result = response.status_code
 
         self.assertEqual(expected, result)
@@ -1400,16 +1451,19 @@ class TestNextDogUndecided(NextGETTestCase):
     def test_return_status_code_200_if_successful(self):
         expected = 200
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        response = self.client.get('/api/dog/1/undecided/next/')
+        response = self.client.get(reverse('dog-next', kwargs={
+            'type': 'undecided',
+            'pk': '1'
+        }))
         result = response.status_code
 
         self.assertEqual(expected, result)
@@ -1417,16 +1471,19 @@ class TestNextDogUndecided(NextGETTestCase):
     def test_return_user_dog_object_with_dog_name_hank_if_successful(self):
         expected = 'Hank'
 
-        resp_login = self.client.post('/api/user/login/', {
-                'username':'test',
-                'password':'12345'
+        resp_login = self.client.post(reverse('login-user'), {
+                'username': 'test',
+                'password': '12345'
             }
         )
 
         token = resp_login.data['token']
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        response = self.client.get('/api/dog/1/undecided/next/')
+        response = self.client.get(reverse('dog-next', kwargs={
+            'type': 'undecided',
+            'pk': '1'
+        }))
         result = response.data['name']
 
         self.assertEqual(expected, result)
