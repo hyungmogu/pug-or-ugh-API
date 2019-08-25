@@ -1,0 +1,7 @@
+==============================
+
+AUGUST 25th, 2019
+    GOAL:
+        []: Pre-populate dogs when user is created
+
+==============================
