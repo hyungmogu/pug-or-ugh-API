@@ -427,7 +427,65 @@ class DogTestCase(TestCase):
 # -----------
 
 """
-"/api/user/preferences" (GET)
+/api/user/ (POST)
+"""
+class TestUserRegisterationPOSTRequest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+        self.dog1 = models.Dog.objects.create(
+            name="Francesca",
+            image_filename="1.jpg",
+            breed="Labrador",
+            age=72,
+            gender="f",
+            size="l"
+        )
+        self.dog2 = models.Dog.objects.create(
+            name="Hank",
+            image_filename="2.jpg",
+            breed="French Bulldog",
+            age=14,
+            gender="m",
+            size="s"
+        )
+
+        self.resp_register = self.client.post(
+            '/api/user/',
+            {
+                'username':'test',
+                'password':'12345'
+            },
+            format='json'
+        )
+        self.user = User.objects.get(username='test')
+
+    def test_return_user_with_length_1(self):
+        expected = 1
+
+        result = User.objects.all().count()
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_with_username_test(self):
+        expected = 'test'
+
+        result = User.objects.get(pk=1).username
+
+        self.assertEqual(expected, result)
+
+    def test_return_user_dogs_with_length_matching_dogs(self):
+        expected = 2
+
+        result = User.objects.get(pk=1).user_dog.all().count()
+
+        self.assertEqual(expected, result)
+
+
+
+
+"""
+/api/user/preferences" (GET)
 """
 class PreferenceTest(TestCase):
     def setUp(self):
