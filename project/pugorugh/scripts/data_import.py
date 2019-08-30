@@ -10,12 +10,14 @@ PROJ_DIR = path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
 
 def load_data():
     filepath = path.join(PROJ_DIR, 'pugorugh', 'static', 'dog_details.json')
-    
+
     with open(filepath, 'r', encoding='utf-8') as file:
         data = json.load(file)
 
         serializer = DogSerializer(data=data, many=True)
+
         if serializer.is_valid():
+            print(serializer.data)
             serializer.save()
         else:
             print(serializer.errors)
