@@ -2,8 +2,8 @@
 
 AUGUST 25th, 2019 (part 2)
     GOAL:
-        []: Add tests for '/api/user/'
-        []: Replace static urls with reverse() in tests.py
+        [x]: Add tests for '/api/user/'
+        [x]: Replace static urls with reverse() in tests.py
 
 ==============================
 
